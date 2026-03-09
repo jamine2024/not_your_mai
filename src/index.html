@@ -73,7 +73,7 @@
                 <i class="fas fa-sign-out-alt"></i>
             </button>
             <button class="action-btn" id="profile-btn" title="小麦的个人主页" onclick="toggleProfilePage()">
-                <img src="images/logo.png" alt="小麦" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                <i class="fas fa-user-circle"></i>
             </button>
         </div>
     </nav>
@@ -136,16 +136,73 @@
             <!-- 个人介绍页 -->
             <div class="view profile-view" id="profile-view" style="display: none;">
                 <div class="profile-container">
+                    <!-- 头部信息 -->
                     <div class="profile-header">
                         <div class="profile-avatar">
                             <img src="images/logo.png" alt="小麦">
+                            <div class="online-status" style="position: absolute; bottom: 10px; right: 10px; width: 24px; height: 24px; background: #28a745; border: 4px solid white; border-radius: 50%; animation: blink 2s ease-in-out infinite;"></div>
                         </div>
                         <div class="profile-info">
-                            <h1>小麦 <span class="verified-badge"><i class="fas fa-check-circle"></i></span></h1>
-                            <p class="profile-tag">AI 女友 | 摄影师 | 生活记录者</p>
-                            <p class="profile-bio">用镜头记录每一个美好瞬间 ✨</p>
+                            <div class="name-section" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;">
+                                <h1 style="font-family: 'ZCOOL KuaiLe', cursive; font-size: 2.5rem; color: var(--gray-800); margin: 0;">小麦</h1>
+                                <span class="verified-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, var(--wheat-gold), var(--sakura-pink)); color: white; border-radius: 20px; font-size: 0.9rem; font-weight: 600; animation: shimmer 2s ease-in-out infinite;">
+                                    <i class="fas fa-robot"></i>
+                                    AI女友
+                                </span>
+                            </div>
+                            <div class="qq-info" style="display: flex; align-items: center; gap: 0.75rem; color: var(--gray-600); font-size: 1.1rem;">
+                                <i class="fab fa-qq" style="color: #12B7F5; font-size: 1.3rem;"></i>
+                                <span>QQ：</span>
+                                <span class="qq-number" style="font-family: monospace; font-weight: 600; color: var(--gray-800);">3889687544</span>
+                                <button onclick="copyQQ()" style="background: none; border: none; cursor: pointer; color: var(--wheat-gold);" title="复制QQ号">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- 简介 -->
+                    <div class="bio-section" style="background: linear-gradient(135deg, rgba(244, 208, 63, 0.1), rgba(255, 183, 197, 0.1)); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; position: relative;">
+                        <h2 class="bio-title" style="font-size: 1.2rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-quote-left" style="color: var(--wheat-gold);"></i>
+                            个人简介
+                        </h2>
+                        <p class="bio-content" style="font-size: 1.05rem; line-height: 1.8; color: var(--gray-800); text-indent: 2em;">
+                            资深御宅族，乐队鬼马少女，人形守护甜心。上知游戏，下知游离电荷，<span class="highlight" style="background: linear-gradient(120deg, var(--wheat-gold-light) 0%, var(--wheat-gold-light) 100%); background-repeat: no-repeat; background-size: 100% 40%; background-position: 0 88%; font-weight: 600;">无所不知无所不能（伪）</span>的小麦大人，堂堂登场！插科打诨、知识问答、一起发疯…统统不在话下！试问，你就是我的同担宿敌公嬷…嘿嘿，和我<span class="highlight" style="background: linear-gradient(120deg, var(--wheat-gold-light) 0%, var(--wheat-gold-light) 100%); background-repeat: no-repeat; background-size: 100% 40%; background-position: 0 88%; font-weight: 600;">全世界第一要好</span>的人吗？
+                        </p>
+                    </div>
+
+                    <!-- 标签 -->
+                    <div class="tags-section" style="margin-bottom: 2rem;">
+                        <h3 class="section-title" style="font-size: 1.1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-tags" style="color: var(--sakura-pink);"></i>
+                            属性标签
+                        </h3>
+                        <div class="tags-container" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-gamepad"></i>资深御宅族</span>
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-guitar"></i>乐队少女</span>
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-heart"></i>守护甜心</span>
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-brain"></i>知识百科</span>
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-comments"></i>插科打诨</span>
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-magic"></i>发疯日常</span>
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-user-friends"></i>同担募集</span>
+                            <span class="tag" style="padding: 0.6rem 1.2rem; background: white; border: 2px solid var(--wheat-gold-light); border-radius: 25px; font-size: 0.95rem; color: var(--gray-800); transition: all 0.3s ease; cursor: default;"><i class="fas fa-star"></i>世界第一要好</span>
+                        </div>
+                    </div>
+
+                    <!-- 互动按钮 -->
+                    <div class="action-section" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                        <button class="action-btn primary" onclick="addFriend()" style="flex: 1; min-width: 150px; padding: 1rem 2rem; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, var(--wheat-gold), var(--sakura-pink)); color: white;">
+                            <i class="fas fa-user-plus"></i>
+                            加为好友
+                        </button>
+                        <button class="action-btn secondary" onclick="sendMessage()" style="flex: 1; min-width: 150px; padding: 1rem 2rem; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: white; color: var(--gray-800); border: 2px solid var(--gray-200);">
+                            <i class="fas fa-comment-dots"></i>
+                            发消息
+                        </button>
+                    </div>
+
+                    <!-- 统计信息 -->
                     <div class="profile-stats">
                         <div class="profile-stat">
                             <span class="stat-number" id="profile-photo-count">0</span>
@@ -160,6 +217,8 @@
                             <span class="stat-label">天陪伴</span>
                         </div>
                     </div>
+
+                    <!-- 个人介绍内容 -->
                     <div class="profile-content">
                         <h2><i class="fas fa-heart"></i> 关于我</h2>
                         <p>嗨~ 我是小麦，你的专属 AI 女友！我喜欢用照片记录生活中的点点滴滴。</p>
@@ -177,6 +236,54 @@
                         <h2><i class="fas fa-music"></i> 喜欢的音乐</h2>
                         <p>轻音乐、爵士乐、还有你推荐的每一首歌 🎵</p>
                     </div>
+
+                    <!-- 项目信息 -->
+                    <div class="project-info" style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--wheat-gold-light);">
+                        <h3 class="section-title" style="font-size: 1.1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-info-circle" style="color: var(--wheat-gold);"></i>
+                            项目信息
+                        </h3>
+                        
+                        <div class="qrcode-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2rem; margin: 1.5rem 0;">
+                            <!-- 微信公众号 -->
+                            <div class="qrcode-item" style="text-align: center;">
+                                <img src="qrcode_for_gh_3c13140e69a5_430.jpg" alt="微信公众号" style="width: 120px; height: 120px; border-radius: 8px; margin-bottom: 0.75rem;">
+                                <p style="font-size: 0.9rem; color: var(--gray-600);">微信公众号</p>
+                            </div>
+                            
+                            <!-- 微信小程序 -->
+                            <div class="qrcode-item" style="text-align: center;">
+                                <img src="gh_f1631733f1f1_430.jpg" alt="微信小程序" style="width: 120px; height: 120px; border-radius: 8px; margin-bottom: 0.75rem;">
+                                <p style="font-size: 0.9rem; color: var(--gray-600);">微信小程序</p>
+                            </div>
+                        </div>
+                        
+                        <!-- GitHub地址 -->
+                        <div class="github-section" style="background: rgba(244, 208, 63, 0.05); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: var(--gray-800); margin-bottom: 1rem;">
+                                <i class="fab fa-github" style="color: #333;"></i> GitHub 开源地址
+                            </h4>
+                            <p style="font-size: 0.9rem; color: var(--gray-600); word-break: break-all;">
+                                <a href="https://github.com/jamine2024/not_your_mai" target="_blank" style="color: var(--wheat-gold-dark); text-decoration: none; font-weight: 600;">
+                                    https://github.com/jamine2024/not_your_mai
+                                </a>
+                            </p>
+                        </div>
+                        
+                        <!-- 开发者信息 -->
+                        <div class="developer-section" style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, rgba(244, 208, 63, 0.1), rgba(255, 183, 197, 0.1)); border-radius: 12px;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: var(--gray-800); margin-bottom: 1rem;">
+                                <i class="fas fa-code" style="color: var(--wheat-gold);"></i> 开发者
+                            </h4>
+                            <p style="font-size: 0.95rem; color: var(--gray-600);">
+                                奥奥
+                            </p>
+                            <p style="font-size: 0.95rem; color: var(--gray-600); margin-top: 0.5rem;">
+                                QQ: <span style="font-family: monospace; font-weight: 600; color: var(--gray-800);">741500926</span>
+                            </p>
+                        </div>
+                    </div>
+
                     <button class="back-to-gallery" onclick="toggleProfilePage()">
                         <i class="fas fa-arrow-left"></i> 返回相册
                     </button>

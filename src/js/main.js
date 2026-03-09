@@ -990,3 +990,27 @@ function toggleProfilePage() {
         switchView(currentView);
     }
 }
+
+// 个人介绍页功能
+function copyQQ() {
+    navigator.clipboard.writeText('3889687544').then(() => {
+        showToast('QQ号已复制到剪贴板！', 'success');
+    }).catch(() => {
+        // 降级方案
+        const input = document.createElement('input');
+        input.value = '3889687544';
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        showToast('QQ号已复制到剪贴板！', 'success');
+    });
+}
+
+function addFriend() {
+    showToast('添加小麦为好友吧！\nQQ：3889687544', 'info');
+}
+
+function sendMessage() {
+    showToast('给小麦发消息吧！\nQQ：3889687544', 'info');
+}
