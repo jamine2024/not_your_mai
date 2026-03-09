@@ -537,6 +537,167 @@ body {
     font-size: 0.9rem;
 }
 
+/* 排行榜样式 */
+.ranking-header {
+    text-align: center;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, rgba(244, 208, 63, 0.1), rgba(255, 183, 197, 0.1));
+    border-radius: var(--radius-lg);
+}
+
+.ranking-header h2 {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    font-size: 2rem;
+    color: var(--gray-800);
+    margin-bottom: 0.5rem;
+}
+
+.ranking-header h2 i {
+    color: #FF6B6B;
+    margin-right: 0.5rem;
+}
+
+.ranking-header p {
+    color: var(--gray-600);
+    font-size: 1rem;
+}
+
+.ranking-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+}
+
+@media (max-width: 1400px) {
+    .ranking-photos-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (max-width: 1200px) {
+    .ranking-photos-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .ranking-photos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .ranking-photos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.ranking-photo-card {
+    position: relative;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+}
+
+.ranking-photo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.rank-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* 前三名特殊样式 */
+.rank-1 .rank-badge {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    font-size: 1.3rem;
+    width: 44px;
+    height: 44px;
+}
+
+.rank-2 .rank-badge {
+    background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+    color: white;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+}
+
+.rank-3 .rank-badge {
+    background: linear-gradient(135deg, #CD7F32, #B87333);
+    color: white;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+}
+
+.rank-other .rank-badge {
+    background: var(--white);
+    color: var(--gray-700);
+    border: 2px solid var(--gray-200);
+}
+
+.ranking-photo-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.ranking-photo-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+}
+
+.ranking-photo-card:hover .ranking-photo-image img {
+    transform: scale(1.05);
+}
+
+.ranking-photo-info {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ranking-likes {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #FF6B6B;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.ranking-likes i {
+    font-size: 1.2rem;
+}
+
+.ranking-date {
+    color: var(--gray-500);
+    font-size: 0.85rem;
+}
+
 /* 按月视图 */
 .month-calendar {
     background: linear-gradient(135deg, #fff9f0 0%, #ffecd2 100%);

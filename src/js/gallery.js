@@ -17,11 +17,13 @@ class GalleryManager {
     
     async loadPhotos() {
         try {
-            const response = await fetch('/api/gallery.php?action=list');
+            // 前端加载所有照片，不分页
+            const response = await fetch('api/gallery.php?action=list&per_page=99999');
             const data = await response.json();
             
             if (data.success) {
                 this.photos = data.photos || [];
+                
                 this.updateStats();
                 this.renderCurrentView();
             }
@@ -52,11 +54,8 @@ class GalleryManager {
             case 'day':
                 this.renderDayView();
                 break;
-            case 'week':
-                this.renderWeekView();
-                break;
-            case 'month':
-                this.renderMonthView();
+            case 'ranking':
+                this.renderRankingView();
                 break;
         }
     }
@@ -139,6 +138,56 @@ class GalleryManager {
         }
         
         this.attachPhotoEvents(container);
+    }
+    
+    // 排行榜视图 - 根据爱心数量排序，展示前30张
+    renderRankingView() {
+        const container = document.getElementById('ranking-grid');
+        container.innerHTML = '';
+        
+        // 按爱心数量排序，取前30张
+        const sortedPhotos = [...this.photos]
+            .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+            .slice(0, 30);
+        
+        if (sortedPhotos.length === 0) {
+            container.innerHTML = this.getEmptyStateHTML();
+            return;
+        }
+        
+        // 创建排行榜网格
+        const rankingGrid = document.createElement('div');
+        rankingGrid.className = 'ranking-photos-grid';
+        
+        sortedPhotos.forEach((photo, index) => {
+            const rank = index + 1;
+            const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+            
+            const photoCard = document.createElement('div');
+            photoCard.className = `ranking-photo-card ${rankClass}`;
+            photoCard.innerHTML = `
+                <div class="rank-badge">${rank}</div>
+                <div class="ranking-photo-image">
+                    <img src="${photo.thumb_path || photo.file_path}" alt="${photo.title || ''}" loading="lazy">
+                </div>
+                <div class="ranking-photo-info">
+                    <div class="ranking-likes">
+                        <i class="fas fa-heart"></i>
+                        <span>${photo.likes || 0}</span>
+                    </div>
+                    <div class="ranking-date">${new Date(photo.taken_at || photo.uploaded_at).toLocaleDateString('zh-CN')}</div>
+                </div>
+            `;
+            
+            // 点击打开照片详情
+            photoCard.addEventListener('click', () => {
+                this.openPhotoModal(photo.id);
+            });
+            
+            rankingGrid.appendChild(photoCard);
+        });
+        
+        container.appendChild(rankingGrid);
     }
     
     // 按月视图
@@ -365,7 +414,7 @@ class GalleryManager {
     // 点赞
     async toggleLike(photoId, btnElement = null) {
         try {
-            const response = await fetch('/api/gallery.php?action=like', {
+            const response = await fetch('api/gallery.php?action=like', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ photo_id: photoId })
@@ -402,7 +451,7 @@ class GalleryManager {
     // 收藏
     async toggleFavorite(photoId, btnElement = null) {
         try {
-            const response = await fetch('/api/gallery.php?action=favorite', {
+            const response = await fetch('api/gallery.php?action=favorite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ photo_id: photoId })

@@ -919,6 +919,18 @@
             <!-- 照片管理 -->
             <section class="content-section" id="page-photos">
                 <h1 class="page-title">照片管理</h1>
+                <div class="photos-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div class="per-page-selector">
+                        <label style="color: var(--gray-600); font-size: 0.9rem; margin-right: 0.5rem;">每页显示：</label>
+                        <select id="per-page-select" onchange="changePerPage(this.value)" style="padding: 0.5rem 1rem; border: 2px solid var(--wheat-gold-light); border-radius: 8px; background: white; color: var(--gray-800); font-size: 0.9rem; cursor: pointer;">
+                            <option value="30" selected>30条</option>
+                            <option value="50">50条</option>
+                            <option value="100">100条</option>
+                            <option value="200">200条</option>
+                            <option value="500">500条</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="photo-actions-bar" id="photo-actions-bar" style="display: none; margin-bottom: 1.5rem;">
                     <div class="actions-left">
                         <label class="select-all-label">
@@ -1273,7 +1285,7 @@
         let selectedPhotoIds = new Set();
         let currentPage = 1;
         let paginationData = null;
-        const PER_PAGE = 30;
+        let perPage = 30; // 默认每页30条，可修改
         
         async function loadPhotos(page = 1) {
             const grid = document.getElementById('photo-grid');
@@ -1281,7 +1293,7 @@
             const pagination = document.getElementById('pagination');
             
             try {
-                const response = await fetch(`api/gallery.php?action=list&page=${page}&per_page=${PER_PAGE}`);
+                const response = await fetch(`api/gallery.php?action=list&page=${page}&per_page=${perPage}`);
                 const data = await response.json();
                 
                 if (!data.success) {
@@ -1361,6 +1373,13 @@
             if (paginationData && currentPage < paginationData.total_pages) {
                 loadPhotos(currentPage + 1);
             }
+        }
+        
+        // 切换每页显示数量
+        function changePerPage(value) {
+            perPage = parseInt(value);
+            currentPage = 1; // 重置到第一页
+            loadPhotos(1);
         }
         
         // 查看照片

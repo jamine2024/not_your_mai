@@ -37,13 +37,9 @@
                 <i class="fas fa-calendar-day"></i>
                 <span>按天</span>
             </button>
-            <button class="nav-btn" data-view="week">
-                <i class="fas fa-calendar-week"></i>
-                <span>按周</span>
-            </button>
-            <button class="nav-btn" data-view="month">
-                <i class="fas fa-calendar-alt"></i>
-                <span>按月</span>
+            <button class="nav-btn" data-view="ranking">
+                <i class="fas fa-heart"></i>
+                <span>排行榜</span>
             </button>
             <button class="nav-btn" data-view="slideshow">
                 <i class="fas fa-play-circle"></i>
@@ -154,14 +150,13 @@
                 <div class="timeline" id="day-timeline"></div>
             </div>
 
-            <!-- 按周视图 -->
-            <div class="view week-view" id="week-view">
-                <div class="week-grid" id="week-grid"></div>
-            </div>
-
-            <!-- 按月视图 -->
-            <div class="view month-view" id="month-view">
-                <div class="month-calendar" id="month-calendar"></div>
+            <!-- 排行榜视图 -->
+            <div class="view ranking-view" id="ranking-view">
+                <div class="ranking-header">
+                    <h2><i class="fas fa-heart"></i> 最受欢迎的照片</h2>
+                    <p>根据爱心数量排序，展示前30张最受欢迎的照片</p>
+                </div>
+                <div class="ranking-grid" id="ranking-grid"></div>
             </div>
 
             <!-- 个人介绍页 -->

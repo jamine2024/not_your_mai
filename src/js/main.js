@@ -635,7 +635,7 @@ function switchView(view) {
 // 加载照片数据
 async function loadPhotos() {
     try {
-        const response = await fetch('api/gallery.php?action=list');
+        const response = await fetch('api/gallery.php?action=list&per_page=99999');
         const data = await response.json();
         
         if (data.success) {
