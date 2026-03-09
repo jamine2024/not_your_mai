@@ -32,11 +32,6 @@
             <span class="slogan">AI女友相册</span>
         </div>
         
-        <!-- 移动端收起/展开按钮 -->
-        <button class="navbar-toggle-btn" id="navbar-toggle" title="收起/展开导航">
-            <i class="fas fa-chevron-up"></i>
-        </button>
-        
         <div class="nav-menu">
             <button class="nav-btn active" data-view="day">
                 <i class="fas fa-calendar-day"></i>
@@ -76,6 +71,42 @@
                 <i class="fas fa-user-circle"></i>
             </button>
         </div>
+
+        <!-- 移动端操作菜单按钮 -->
+        <button class="mobile-actions-toggle" id="mobile-actions-toggle" title="更多操作">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
+
+        <!-- 移动端操作菜单 -->
+        <div class="mobile-actions-menu" id="mobile-actions-menu">
+            <button class="mobile-action-btn" id="mobile-upload-btn" title="上传照片">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>上传</span>
+            </button>
+            <button class="mobile-action-btn" id="mobile-effect-btn" title="特效模式">
+                <i class="fas fa-magic"></i>
+                <span>特效</span>
+            </button>
+            <button class="mobile-action-btn" id="mobile-music-btn" title="音乐">
+                <i class="fas fa-music"></i>
+                <span>音乐</span>
+            </button>
+            <button class="mobile-action-btn" id="mobile-login-btn" title="管理员登录">
+                <i class="fas fa-user-shield"></i>
+                <span>登录</span>
+            </button>
+            <button class="mobile-action-btn hidden" id="mobile-logout-btn" title="退出登录">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>退出</span>
+            </button>
+            <button class="mobile-action-btn" id="mobile-profile-btn" title="个人主页">
+                <i class="fas fa-user-circle"></i>
+                <span>我的</span>
+            </button>
+        </div>
+
+        <!-- 移动端菜单遮罩 -->
+        <div class="mobile-actions-overlay" id="mobile-actions-overlay"></div>
     </nav>
 
     <!-- AI女友欢迎语 -->
@@ -247,13 +278,13 @@
                         <div class="qrcode-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2rem; margin: 1.5rem 0;">
                             <!-- 微信公众号 -->
                             <div class="qrcode-item" style="text-align: center;">
-                                <img src="qrcode_for_gh_3c13140e69a5_430.jpg" alt="微信公众号" style="width: 120px; height: 120px; border-radius: 8px; margin-bottom: 0.75rem;">
+                                <img src="/qrcode_for_gh_3c13140e69a5_430.jpg" alt="微信公众号" style="width: 120px; height: 120px; border-radius: 8px; margin-bottom: 0.75rem;">
                                 <p style="font-size: 0.9rem; color: var(--gray-600);">微信公众号</p>
                             </div>
                             
                             <!-- 微信小程序 -->
                             <div class="qrcode-item" style="text-align: center;">
-                                <img src="gh_f1631733f1f1_430.jpg" alt="微信小程序" style="width: 120px; height: 120px; border-radius: 8px; margin-bottom: 0.75rem;">
+                                <img src="/gh_f1631733f1f1_430.jpg" alt="微信小程序" style="width: 120px; height: 120px; border-radius: 8px; margin-bottom: 0.75rem;">
                                 <p style="font-size: 0.9rem; color: var(--gray-600);">微信小程序</p>
                             </div>
                         </div>

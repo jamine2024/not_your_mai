@@ -1014,3 +1014,116 @@ function addFriend() {
 function sendMessage() {
     showToast('给小麦发消息吧！\nQQ：3889687544', 'info');
 }
+
+// 移动端操作菜单功能
+let isMobileMenuOpen = false;
+
+function initMobileActionsMenu() {
+    const toggleBtn = document.getElementById('mobile-actions-toggle');
+    const menu = document.getElementById('mobile-actions-menu');
+    const overlay = document.getElementById('mobile-actions-overlay');
+    
+    if (!toggleBtn || !menu || !overlay) return;
+    
+    // 切换菜单显示/隐藏
+    toggleBtn.addEventListener('click', () => {
+        isMobileMenuOpen = !isMobileMenuOpen;
+        toggleMobileMenu(isMobileMenuOpen);
+    });
+    
+    // 点击遮罩关闭菜单
+    overlay.addEventListener('click', () => {
+        isMobileMenuOpen = false;
+        toggleMobileMenu(false);
+    });
+    
+    // 移动端操作按钮事件绑定
+    initMobileActionButtons();
+}
+
+function toggleMobileMenu(show) {
+    const toggleBtn = document.getElementById('mobile-actions-toggle');
+    const menu = document.getElementById('mobile-actions-menu');
+    const overlay = document.getElementById('mobile-actions-overlay');
+    
+    if (show) {
+        toggleBtn.classList.add('active');
+        menu.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    } else {
+        toggleBtn.classList.remove('active');
+        menu.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function initMobileActionButtons() {
+    // 上传按钮
+    const mobileUploadBtn = document.getElementById('mobile-upload-btn');
+    mobileUploadBtn?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+        // 触发桌面端上传按钮的点击事件
+        document.getElementById('upload-btn')?.click();
+    });
+    
+    // 特效按钮
+    const mobileEffectBtn = document.getElementById('mobile-effect-btn');
+    mobileEffectBtn?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+        document.getElementById('effect-btn')?.click();
+    });
+    
+    // 音乐按钮
+    const mobileMusicBtn = document.getElementById('mobile-music-btn');
+    mobileMusicBtn?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+        document.getElementById('music-btn')?.click();
+    });
+    
+    // 登录按钮
+    const mobileLoginBtn = document.getElementById('mobile-login-btn');
+    mobileLoginBtn?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+        window.location.href = 'login.html';
+    });
+    
+    // 退出按钮
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    mobileLogoutBtn?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+        sessionStorage.removeItem('admin_logged_in');
+        sessionStorage.removeItem('login_time');
+        updateLoginUI();
+        alert('已退出登录');
+    });
+    
+    // 个人主页按钮
+    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
+    mobileProfileBtn?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+        toggleProfilePage();
+    });
+}
+
+// 更新移动端登录按钮状态
+function updateMobileLoginUI() {
+    const isLoggedIn = checkLoginStatus();
+    const mobileLoginBtn = document.getElementById('mobile-login-btn');
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    
+    if (isLoggedIn) {
+        mobileLoginBtn?.classList.add('hidden');
+        mobileLogoutBtn?.classList.remove('hidden');
+    } else {
+        mobileLoginBtn?.classList.remove('hidden');
+        mobileLogoutBtn?.classList.add('hidden');
+    }
+}
+
+// 在DOM加载完成后初始化移动端菜单
+document.addEventListener('DOMContentLoaded', () => {
+    initMobileActionsMenu();
+    updateMobileLoginUI();
+});
