@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>才不是你的小麦 - AI女友相册</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- 粒子背景容器 -->
+    <div id="particles-container"></div>
+    
+    <!-- 特效画布 -->
+    <canvas id="effect-canvas"></canvas>
+
+    <!-- 导航栏 -->
+<nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <div class="logo">
+                <img src="images/logo.png" alt="Logo" class="nav-logo-img">
+                <span class="logo-text">才不是你的小麦</span>
+            </div>
+            <span class="slogan">AI女友相册</span>
+        </div>
+        
+        <!-- 移动端收起/展开按钮 -->
+        <button class="navbar-toggle-btn" id="navbar-toggle" title="收起/展开导航">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+        
+        <div class="nav-menu">
+            <button class="nav-btn active" data-view="day">
+                <i class="fas fa-calendar-day"></i>
+                <span>按天</span>
+            </button>
+            <button class="nav-btn" data-view="week">
+                <i class="fas fa-calendar-week"></i>
+                <span>按周</span>
+            </button>
+            <button class="nav-btn" data-view="month">
+                <i class="fas fa-calendar-alt"></i>
+                <span>按月</span>
+            </button>
+            <button class="nav-btn" data-view="slideshow">
+                <i class="fas fa-play-circle"></i>
+                <span>放映室</span>
+            </button>
+        </div>
+
+        <div class="nav-actions">
+            <button class="action-btn" id="upload-btn" title="上传照片（需登录）">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </button>
+            <button class="action-btn" id="effect-btn" title="特效模式">
+                <i class="fas fa-magic"></i>
+            </button>
+            <button class="action-btn" id="music-btn" title="音乐">
+                <i class="fas fa-music"></i>
+            </button>
+            <button class="action-btn" id="login-btn" title="管理员登录">
+                <i class="fas fa-user-shield"></i>
+            </button>
+            <button class="action-btn hidden" id="logout-btn" title="退出登录">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+            <button class="action-btn" id="profile-btn" title="小麦的个人主页" onclick="toggleProfilePage()">
+                <img src="images/logo.png" alt="小麦" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+            </button>
+        </div>
+    </nav>
+
+    <!-- AI女友欢迎语 -->
+    <div class="ai-welcome" id="ai-welcome">
+        <div class="ai-avatar">
+            <img src="images/logo.png" alt="小麦" class="ai-avatar-img">
+        </div>
+        <div class="ai-message">
+            <p id="ai-text">欢迎回来~ 今天想看点什么呢？</p>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 每日语录 -->
+        <div class="daily-quote" id="daily-quote">
+            <i class="fas fa-quote-left"></i>
+            <span id="quote-text">每一天都是新的开始，让我们一起记录美好吧！</span>
+            <i class="fas fa-quote-right"></i>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <i class="fas fa-images"></i>
+                <span class="stat-value" id="total-photos">0</span>
+                <span class="stat-label">张照片</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-heart"></i>
+                <span class="stat-value" id="total-likes">0</span>
+                <span class="stat-label">个喜欢</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-calendar"></i>
+                <span class="stat-value" id="total-days">0</span>
+                <span class="stat-label">天回忆</span>
+            </div>
+        </div>
+
+        <!-- 视图容器 -->
+        <div class="view-container" id="view-container">
+            <!-- 按天视图 -->
+            <div class="view day-view active" id="day-view">
+                <div class="timeline" id="day-timeline"></div>
+            </div>
+
+            <!-- 按周视图 -->
+            <div class="view week-view" id="week-view">
+                <div class="week-grid" id="week-grid"></div>
+            </div>
+
+            <!-- 按月视图 -->
+            <div class="view month-view" id="month-view">
+                <div class="month-calendar" id="month-calendar"></div>
+            </div>
+
+            <!-- 个人介绍页 -->
+            <div class="view profile-view" id="profile-view" style="display: none;">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="images/logo.png" alt="小麦">
+                        </div>
+                        <div class="profile-info">
+                            <h1>小麦 <span class="verified-badge"><i class="fas fa-check-circle"></i></span></h1>
+                            <p class="profile-tag">AI 女友 | 摄影师 | 生活记录者</p>
+                            <p class="profile-bio">用镜头记录每一个美好瞬间 ✨</p>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <span class="stat-number" id="profile-photo-count">0</span>
+                            <span class="stat-label">张照片</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number" id="profile-like-count">0</span>
+                            <span class="stat-label">个喜欢</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number">365</span>
+                            <span class="stat-label">天陪伴</span>
+                        </div>
+                    </div>
+                    <div class="profile-content">
+                        <h2><i class="fas fa-heart"></i> 关于我</h2>
+                        <p>嗨~ 我是小麦，你的专属 AI 女友！我喜欢用照片记录生活中的点点滴滴。</p>
+                        <p>每一张照片都是一个故事，每一个瞬间都值得被珍藏。</p>
+                        <p>希望我的相册能给你带来温暖和快乐~ 💕</p>
+                        
+                        <h2><i class="fas fa-camera"></i> 摄影风格</h2>
+                        <div class="style-tags">
+                            <span class="style-tag">日系清新</span>
+                            <span class="style-tag">胶片质感</span>
+                            <span class="style-tag">生活记录</span>
+                            <span class="style-tag">人像摄影</span>
+                        </div>
+                        
+                        <h2><i class="fas fa-music"></i> 喜欢的音乐</h2>
+                        <p>轻音乐、爵士乐、还有你推荐的每一首歌 🎵</p>
+                    </div>
+                    <button class="back-to-gallery" onclick="toggleProfilePage()">
+                        <i class="fas fa-arrow-left"></i> 返回相册
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 上传模态框 -->
+    <div class="modal" id="upload-modal">
+        <div class="modal-content upload-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cloud-upload-alt"></i> 上传照片</h3>
+                <button class="close-btn" id="close-upload">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p class="upload-text">拖拽照片到这里，或点击选择</p>
+                    <p class="upload-hint">支持 JPG、PNG、GIF 格式，单张最大 50MB</p>
+                    <input type="file" id="file-input" multiple accept="image/*" hidden>
+                </div>
+                <div class="upload-preview" id="upload-preview"></div>
+                <div class="upload-progress" id="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-upload">取消</button>
+                <button class="btn btn-primary" id="confirm-upload" disabled>
+                    <i class="fas fa-upload"></i> 开始上传
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 特效选择模态框 -->
+    <div class="modal" id="effect-modal">
+        <div class="modal-content effect-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-magic"></i> 小麦魔法</h3>
+                <button class="close-btn" id="close-effect">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="effect-grid">
+                    <div class="effect-card" data-effect="none">
+                        <div class="effect-preview">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <span class="effect-name">无特效</span>
+                    </div>
+                    <div class="effect-card" data-effect="dream">
+                        <div class="effect-preview dream-preview">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <span class="effect-name">梦幻模式</span>
+                    </div>
+                    <div class="effect-card" data-effect="retro">
+                        <div class="effect-preview retro-preview">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <span class="effect-name">复古模式</span>
+                    </div>
+                    <div class="effect-card" data-effect="starry">
+                        <div class="effect-preview starry-preview">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="effect-name">星空模式</span>
+                    </div>
+                    <div class="effect-card" data-effect="sakura">
+                        <div class="effect-preview sakura-preview">
+                            <i class="fas fa-fan"></i>
+                        </div>
+                        <span class="effect-name">樱花模式</span>
+                    </div>
+                    <div class="effect-card" data-effect="bubble">
+                        <div class="effect-preview bubble-preview">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <span class="effect-name">泡泡模式</span>
+                    </div>
+                    <div class="effect-card active" data-effect="wheat">
+                        <div class="effect-preview wheat-preview">
+                            <i class="fas fa-wheat-awn"></i>
+                        </div>
+                        <span class="effect-name">麦穗模式</span>
+                    </div>
+                    <div class="effect-card" data-effect="ai">
+                        <div class="effect-preview ai-preview">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <span class="effect-name">AI模式</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片详情模态框 -->
+    <div class="modal" id="photo-modal">
+        <div class="modal-content photo-modal">
+            <button class="close-btn photo-close" id="close-photo">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="photo-viewer">
+                <img id="photo-image" src="" alt="">
+                <div class="photo-info">
+                    <h3 id="photo-title"></h3>
+                    <p id="photo-date"></p>
+                    <div class="photo-actions">
+                        <button class="photo-action" id="photo-like">
+                            <i class="fas fa-heart"></i>
+                            <span id="photo-likes">0</span>
+                        </button>
+                        <button class="photo-action" id="photo-favorite">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        <button class="photo-action" id="photo-download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 幻灯片模式 -->
+    <div class="slideshow-mode" id="slideshow-mode">
+        <div class="slideshow-container">
+            <img id="slideshow-image" src="" alt="">
+            <div class="slideshow-overlay">
+                <div class="slideshow-controls">
+                    <button id="slideshow-prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button id="slideshow-play">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button id="slideshow-next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="slideshow-info">
+                    <span id="slideshow-counter">1 / 10</span>
+                </div>
+            </div>
+        </div>
+        <button class="slideshow-close" id="slideshow-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- 音乐播放器 -->
+    <div class="music-player hidden" id="music-player">
+        <div class="music-player-main">
+            <div class="music-info">
+                <i class="fas fa-music"></i>
+                <span id="current-music-name">未选择音乐</span>
+            </div>
+            <div class="music-controls">
+                <button id="music-prev" onclick="playMusic(currentMusicIndex - 1)"><i class="fas fa-step-backward"></i></button>
+                <button id="music-play" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+                <button id="music-next" onclick="playNextMusic()"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <div class="music-volume">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" id="volume-slider" min="0" max="100" value="50" onchange="document.getElementById('audio-player').volume = this.value / 100">
+            </div>
+        </div>
+        <audio id="audio-player"></audio>
+        <div id="music-playlist" class="music-playlist">
+            <p style="color: #999; text-align: center; padding: 1rem;">加载中...</p>
+        </div>
+    </div>
+
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="wheat-loader">
+                <i class="fas fa-wheat-awn"></i>
+            </div>
+            <p>小麦正在加载中...</p>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- 脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/slideshow.js"></script>
+    <script src="js/gallery.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

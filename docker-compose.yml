@@ -1,0 +1,31 @@
+name: wheat-album
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wheat-app
+    ports:
+      - "5656:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./uploads:/var/www/html/uploads
+      - ./data:/var/www/html/data
+      - mysql_data:/var/lib/mysql
+    environment:
+      - DB_HOST=localhost
+      - DB_PORT=3306
+      - DB_NAME=wheat_album
+      - DB_USER=root
+      - DB_PASS=root
+    networks:
+      - wheat-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  wheat-network:
+    driver: bridge

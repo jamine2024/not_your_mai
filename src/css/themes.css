@@ -1,0 +1,543 @@
+/* 才不是你的小麦 - 主题样式 */
+
+/* ==================== 梦幻模式 ==================== */
+body.theme-dream {
+    background: linear-gradient(135deg, #E6E6FA 0%, #FFB7C5 50%, #F9E79F 100%);
+    background-attachment: fixed;
+}
+
+body.theme-dream .navbar {
+    background: rgba(255, 255, 255, 0.7);
+    border-bottom-color: rgba(230, 230, 250, 0.5);
+}
+
+body.theme-dream .day-card,
+body.theme-dream .week-card,
+body.theme-dream .month-calendar {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+body.theme-dream .daily-quote {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(230, 230, 250, 0.5);
+}
+
+/* 梦幻粒子效果 */
+.theme-dream-particle {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: dreamFloat 8s ease-in-out infinite;
+}
+
+@keyframes dreamFloat {
+    0%, 100% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* ==================== 复古模式 ==================== */
+body.theme-retro {
+    background: #F5E6D3;
+    filter: sepia(0.3);
+}
+
+body.theme-retro .navbar {
+    background: rgba(139, 69, 19, 0.9);
+    color: #F5E6D3;
+}
+
+body.theme-retro .logo,
+body.theme-retro .slogan {
+    color: #F5E6D3;
+}
+
+body.theme-retro .nav-btn {
+    color: #D2691E;
+}
+
+body.theme-retro .nav-btn.active {
+    background: linear-gradient(135deg, #8B4513, #D2691E);
+}
+
+body.theme-retro .day-card,
+body.theme-retro .week-card,
+body.theme-retro .month-calendar {
+    background: #FFF8DC;
+    border: 2px solid #D2691E;
+    box-shadow: 4px 4px 0 #8B4513;
+}
+
+body.theme-retro .photo-card {
+    filter: sepia(0.4) contrast(1.1);
+    border: 3px solid #8B4513;
+}
+
+body.theme-retro .daily-quote {
+    background: #FFF8DC;
+    border-color: #D2691E;
+    font-family: 'Courier New', monospace;
+}
+
+/* 复古胶片颗粒效果 */
+.theme-retro-grain::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ==================== 星空模式 ==================== */
+body.theme-starry {
+    background: linear-gradient(to bottom, #0a0a2e 0%, #1a1a4e 50%, #2a2a6e 100%);
+    color: #E6E6FA;
+}
+
+body.theme-starry .navbar {
+    background: rgba(10, 10, 46, 0.9);
+    border-bottom-color: rgba(100, 149, 237, 0.3);
+}
+
+body.theme-starry .logo-text,
+body.theme-starry .slogan {
+    color: #87CEEB;
+}
+
+body.theme-starry .nav-btn {
+    color: #B0C4DE;
+}
+
+body.theme-starry .nav-btn.active {
+    background: linear-gradient(135deg, #191970, #4169E1);
+}
+
+body.theme-starry .day-card,
+body.theme-starry .week-card,
+body.theme-starry .month-calendar {
+    background: rgba(25, 25, 112, 0.6);
+    border: 1px solid rgba(100, 149, 237, 0.3);
+    color: #E6E6FA;
+}
+
+body.theme-starry .daily-quote {
+    background: rgba(25, 25, 112, 0.5);
+    border-color: rgba(100, 149, 237, 0.3);
+    color: #87CEEB;
+}
+
+body.theme-starry .stat-item {
+    background: rgba(25, 25, 112, 0.6);
+    color: #E6E6FA;
+}
+
+/* 星星闪烁动画 */
+.theme-starry-star {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px white, 0 0 20px white;
+    animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* 流星效果 */
+.theme-starry-meteor {
+    position: fixed;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, white, transparent);
+    animation: meteor 3s linear infinite;
+    opacity: 0;
+}
+
+@keyframes meteor {
+    0% {
+        opacity: 0;
+        transform: translateX(-100px) translateY(-100px) rotate(-45deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100vw) translateY(100vh) rotate(-45deg);
+    }
+}
+
+/* ==================== 樱花模式 ==================== */
+body.theme-sakura {
+    background: linear-gradient(135deg, #FFF0F5 0%, #FFB7C5 50%, #FFC0CB 100%);
+    background-attachment: fixed;
+}
+
+body.theme-sakura .navbar {
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom-color: rgba(255, 183, 197, 0.5);
+}
+
+body.theme-sakura .day-card,
+body.theme-sakura .week-card,
+body.theme-sakura .month-calendar {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 183, 197, 0.5);
+}
+
+body.theme-sakura .daily-quote {
+    background: rgba(255, 240, 245, 0.8);
+    border-color: rgba(255, 183, 197, 0.5);
+}
+
+/* 樱花飘落 */
+.theme-sakura-petal {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #FFB7C5, #FFC0CB);
+    border-radius: 50% 0 50% 50%;
+    pointer-events: none;
+    animation: petalFall 6s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes petalFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg) translateX(100px);
+        opacity: 0;
+    }
+}
+
+/* ==================== 泡泡模式 ==================== */
+body.theme-bubble {
+    background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 50%, #80DEEA 100%);
+    background-attachment: fixed;
+}
+
+body.theme-bubble .navbar {
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom-color: rgba(128, 222, 234, 0.5);
+}
+
+body.theme-bubble .day-card,
+body.theme-bubble .week-card,
+body.theme-bubble .month-calendar {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(128, 222, 234, 0.5);
+}
+
+body.theme-bubble .daily-quote {
+    background: rgba(224, 247, 250, 0.8);
+    border-color: rgba(128, 222, 234, 0.5);
+}
+
+/* 泡泡浮动 */
+.theme-bubble-bubble {
+    position: fixed;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.4) 20%, rgba(135,206,235,0.3) 60%, rgba(135,206,235,0.1));
+    box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), 0 0 10px rgba(255,255,255,0.5);
+    pointer-events: none;
+    animation: bubbleFloat 10s ease-in-out infinite;
+}
+
+@keyframes bubbleFloat {
+    0%, 100% {
+        transform: translateY(100vh) scale(0.5);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* ==================== 麦穗模式 (默认主题) ==================== */
+body.theme-wheat {
+    background: linear-gradient(135deg, #FFF8F0 0%, #F9E79F 30%, #F4D03F 70%, #F9E79F 100%);
+    background-attachment: fixed;
+}
+
+body.theme-wheat .navbar {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom-color: rgba(244, 208, 63, 0.3);
+}
+
+body.theme-wheat .day-card,
+body.theme-wheat .week-card,
+body.theme-wheat .month-calendar {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(244, 208, 63, 0.3);
+}
+
+body.theme-wheat .daily-quote {
+    background: rgba(255, 248, 240, 0.9);
+    border-color: rgba(244, 208, 63, 0.4);
+}
+
+/* 麦穗装饰 */
+.theme-wheat-stalk {
+    position: fixed;
+    bottom: 0;
+    width: 30px;
+    height: 150px;
+    background: linear-gradient(to top, #D4AC0D, #F4D03F);
+    clip-path: polygon(40% 100%, 60% 100%, 55% 0%, 45% 0%);
+    transform-origin: bottom center;
+    animation: wheatSway 3s ease-in-out infinite;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.theme-wheat-stalk::before {
+    content: '🌾';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+}
+
+/* 麦穗粒子 */
+.theme-wheat-particle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: #F4D03F;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: wheatParticle 4s ease-in-out infinite;
+}
+
+@keyframes wheatParticle {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ==================== AI模式 ==================== */
+body.theme-ai {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    color: #00D9FF;
+}
+
+body.theme-ai .navbar {
+    background: rgba(10, 10, 10, 0.95);
+    border-bottom-color: rgba(0, 217, 255, 0.3);
+}
+
+body.theme-ai .logo-text {
+    color: #00D9FF;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+body.theme-ai .slogan {
+    color: #00CED1;
+}
+
+body.theme-ai .nav-btn {
+    color: #5F9EA0;
+}
+
+body.theme-ai .nav-btn.active {
+    background: linear-gradient(135deg, #00D9FF, #00CED1);
+    color: #0a0a0a;
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+}
+
+body.theme-ai .day-card,
+body.theme-ai .week-card,
+body.theme-ai .month-calendar {
+    background: rgba(22, 33, 62, 0.8);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+}
+
+body.theme-ai .daily-quote {
+    background: rgba(22, 33, 62, 0.7);
+    border-color: rgba(0, 217, 255, 0.3);
+    color: #00D9FF;
+}
+
+body.theme-ai .stat-item {
+    background: rgba(22, 33, 62, 0.8);
+    color: #00D9FF;
+    border: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+body.theme-ai .photo-card {
+    border: 1px solid rgba(0, 217, 255, 0.3);
+}
+
+/* AI数据流效果 */
+.theme-ai-datastream {
+    position: fixed;
+    width: 2px;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, #00D9FF, transparent);
+    opacity: 0.5;
+    animation: dataStream 3s linear infinite;
+}
+
+@keyframes dataStream {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+/* AI网格背景 */
+.theme-ai-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* AI扫描线 */
+.theme-ai-scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 217, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+    animation: scanline 4s linear infinite;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateY(-100vh);
+    }
+    100% {
+        transform: translateY(100vh);
+    }
+}
+
+/* ==================== 无特效模式 ==================== */
+body.theme-none {
+    background: #FFF8F0;
+}
+
+body.theme-none #effect-canvas,
+body.theme-none #particles-container {
+    display: none;
+}
+
+/* ==================== 主题切换过渡 ==================== */
+body {
+    transition: background 0.5s ease, color 0.5s ease;
+}
+
+.navbar,
+.day-card,
+.week-card,
+.month-calendar,
+.daily-quote,
+.stat-item {
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ==================== 特效画布样式 ==================== */
+#effect-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ==================== 响应式主题调整 ==================== */
+@media (max-width: 768px) {
+    body.theme-dream,
+    body.theme-sakura,
+    body.theme-bubble,
+    body.theme-wheat {
+        background-attachment: scroll;
+    }
+    
+    .theme-wheat-stalk {
+        display: none;
+    }
+}
