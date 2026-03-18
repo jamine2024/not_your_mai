@@ -620,11 +620,6 @@ function switchView(view) {
     
     currentView = view;
     
-    if (view === 'slideshow') {
-        startSlideshow();
-        return;
-    }
-    
     const targetView = document.getElementById(`${view}-view`);
     if (targetView) {
         targetView.classList.add('active');
@@ -687,6 +682,11 @@ function renderView(view) {
             break;
         case 'month':
             renderMonthView();
+            break;
+        case 'memory':
+            if (window.memoryManager) {
+                window.memoryManager.loadMemoryPhotos();
+            }
             break;
     }
 }
@@ -895,52 +895,7 @@ async function toggleLike(photoId) {
     }
 }
 
-// 幻灯片播放
-let slideshowInterval = null;
-let currentSlideIndex = 0;
 
-function startSlideshow() {
-    if (photosData.length === 0) {
-        showToast('还没有照片可以播放', 'warning');
-        switchView('day');
-        return;
-    }
-    
-    const modal = document.getElementById('photo-modal');
-    modal.classList.add('active');
-    
-    currentSlideIndex = 0;
-    showSlide(currentSlideIndex);
-    
-    slideshowInterval = setInterval(() => {
-        currentSlideIndex = (currentSlideIndex + 1) % photosData.length;
-        showSlide(currentSlideIndex);
-    }, 3000);
-    
-    // 点击关闭时停止幻灯片
-    document.getElementById('close-photo').onclick = () => {
-        stopSlideshow();
-        modal.classList.remove('active');
-    };
-}
-
-function stopSlideshow() {
-    if (slideshowInterval) {
-        clearInterval(slideshowInterval);
-        slideshowInterval = null;
-    }
-}
-
-function showSlide(index) {
-    const photo = photosData[index];
-    if (!photo) return;
-    
-    document.getElementById('photo-image').src = photo.file_path;
-    document.getElementById('photo-title').textContent = photo.original_name;
-    document.getElementById('photo-date').textContent = 
-        `${new Date(photo.taken_at || photo.uploaded_at).toLocaleString('zh-CN')} (${index + 1}/${photosData.length})`;
-    document.getElementById('photo-likes').textContent = photo.likes || 0;
-}
 
 // 切换个人介绍页
 let isProfilePageVisible = false;

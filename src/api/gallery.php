@@ -24,6 +24,9 @@ switch ($action) {
     case 'stats':
         getStats();
         break;
+    case 'deduplicate':
+        deduplicatePhotos();
+        break;
     default:
         errorResponse('未知操作');
 }
@@ -190,12 +193,81 @@ function getStats() {
         $stmt = $db->query("SELECT COUNT(*) as count FROM photos WHERE is_favorite = 1");
         $stats['total_favorites'] = $stmt->fetch()['count'];
         
-        // 不同天数
-        $stmt = $db->query("SELECT COUNT(DISTINCT DATE(taken_at)) as count FROM photos WHERE taken_at IS NOT NULL");
-        $stats['total_days'] = $stmt->fetch()['count'];
-        
+        // 不同天数 - 优先使用taken_at，否则使用uploaded_at
+        $stmt = $db->query("SELECT COUNT(DISTINCT DATE(COALESCE(taken_at, uploaded_at))) as count FROM photos");
+        $stats['total_days'] = $stmt->fetch()['count'] ?? 0;      
         successResponse(['stats' => $stats]);
     } catch (PDOException $e) {
         errorResponse('获取统计失败: ' . $e->getMessage());
+    }
+}
+
+// 一键去重照片
+function deduplicatePhotos() {
+    try {
+        $db = getDB();
+        
+        // 开始事务
+        $db->beginTransaction();
+        
+        // 找出重复的照片组
+        $stmt = $db->query("SELECT 
+            original_name, file_size, width, height, 
+            MIN(uploaded_at) as earliest_upload, 
+            GROUP_CONCAT(id ORDER BY uploaded_at) as photo_ids
+        FROM photos 
+        GROUP BY original_name, file_size, width, height 
+        HAVING COUNT(*) > 1");
+        
+        $duplicateGroups = $stmt->fetchAll();
+        $deletedCount = 0;
+        $deletedFiles = [];
+        
+        foreach ($duplicateGroups as $group) {
+            $photoIds = explode(',', $group['photo_ids']);
+            $earliestId = $photoIds[0]; // 第一个是上传时间最早的
+            
+            // 删除其他重复的照片
+            for ($i = 1; $i < count($photoIds); $i++) {
+                $photoId = $photoIds[$i];
+                
+                // 获取文件路径
+                $stmt = $db->prepare("SELECT file_path, thumb_path FROM photos WHERE id = ?");
+                $stmt->execute([$photoId]);
+                $photo = $stmt->fetch();
+                
+                if ($photo) {
+                    // 删除文件
+                    $basePath = __DIR__ . '/../';
+                    if (file_exists($basePath . $photo['file_path'])) {
+                        unlink($basePath . $photo['file_path']);
+                        $deletedFiles[] = $photo['file_path'];
+                    }
+                    if (file_exists($basePath . $photo['thumb_path'])) {
+                        unlink($basePath . $photo['thumb_path']);
+                        $deletedFiles[] = $photo['thumb_path'];
+                    }
+                    
+                    // 删除数据库记录
+                    $stmt = $db->prepare("DELETE FROM photos WHERE id = ?");
+                    $stmt->execute([$photoId]);
+                    
+                    $deletedCount++;
+                }
+            }
+        }
+        
+        // 提交事务
+        $db->commit();
+        
+        successResponse([
+            'message' => '去重完成',
+            'deleted_count' => $deletedCount,
+            'deleted_files' => $deletedFiles
+        ]);
+    } catch (PDOException $e) {
+        // 回滚事务
+        $db->rollBack();
+        errorResponse('去重失败: ' . $e->getMessage());
     }
 }

@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/memory.css">
 </head>
 <body>
     <!-- 粒子背景容器 -->
@@ -41,9 +42,9 @@
                 <i class="fas fa-heart"></i>
                 <span>排行榜</span>
             </button>
-            <button class="nav-btn" data-view="slideshow">
-                <i class="fas fa-play-circle"></i>
-                <span>放映室</span>
+            <button class="nav-btn" data-view="memory">
+                <i class="fas fa-history"></i>
+                <span>回忆</span>
             </button>
         </div>
 
@@ -157,6 +158,15 @@
                     <p>根据爱心数量排序，展示前30张最受欢迎的照片</p>
                 </div>
                 <div class="ranking-grid" id="ranking-grid"></div>
+            </div>
+
+            <!-- 回忆页面 -->
+            <div class="view memory-view" id="memory-view">
+                <div class="memory-header">
+                    <h2><i class="fas fa-history"></i> 回忆</h2>
+                    <p>滚动浏览我们的美好时光</p>
+                </div>
+                <div class="memory-photo-wall" id="memory-photo-wall"></div>
             </div>
 
             <!-- 个人介绍页 -->
@@ -423,6 +433,12 @@
             <button class="close-btn photo-close" id="close-photo">
                 <i class="fas fa-times"></i>
             </button>
+            <div class="photo-nav prev" onclick="window.galleryManager.prevPhoto()">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="photo-nav next" onclick="window.galleryManager.nextPhoto()">
+                <i class="fas fa-chevron-right"></i>
+            </div>
             <div class="photo-viewer">
                 <img id="photo-image" src="" alt="">
                 <div class="photo-info">
@@ -433,9 +449,6 @@
                             <i class="fas fa-heart"></i>
                             <span id="photo-likes">0</span>
                         </button>
-                        <button class="photo-action" id="photo-favorite">
-                            <i class="fas fa-star"></i>
-                        </button>
                         <button class="photo-action" id="photo-download">
                             <i class="fas fa-download"></i>
                         </button>
@@ -445,31 +458,7 @@
         </div>
     </div>
 
-    <!-- 幻灯片模式 -->
-    <div class="slideshow-mode" id="slideshow-mode">
-        <div class="slideshow-container">
-            <img id="slideshow-image" src="" alt="">
-            <div class="slideshow-overlay">
-                <div class="slideshow-controls">
-                    <button id="slideshow-prev">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button id="slideshow-play">
-                        <i class="fas fa-pause"></i>
-                    </button>
-                    <button id="slideshow-next">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                <div class="slideshow-info">
-                    <span id="slideshow-counter">1 / 10</span>
-                </div>
-            </div>
-        </div>
-        <button class="slideshow-close" id="slideshow-close">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
+
 
     <!-- 音乐播放器 -->
     <div class="music-player hidden" id="music-player">
@@ -510,8 +499,8 @@
     <!-- 脚本 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="js/effects.js"></script>
-    <script src="js/slideshow.js"></script>
     <script src="js/gallery.js"></script>
+    <script src="js/memory.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

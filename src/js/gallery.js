@@ -57,6 +57,11 @@ class GalleryManager {
             case 'ranking':
                 this.renderRankingView();
                 break;
+            case 'memory':
+                if (window.memoryManager) {
+                    window.memoryManager.loadMemoryPhotos();
+                }
+                break;
         }
     }
     
@@ -394,6 +399,8 @@ class GalleryManager {
         if (!photo) return;
         
         const modal = document.getElementById('photo-modal');
+        const photoIndex = this.photos.findIndex(p => p.id == photoId);
+        
         document.getElementById('photo-image').src = photo.file_path;
         document.getElementById('photo-title').textContent = photo.title || '未命名';
         document.getElementById('photo-date').textContent = new Date(photo.taken_at || photo.uploaded_at).toLocaleString('zh-CN');
@@ -403,12 +410,45 @@ class GalleryManager {
         likeBtn.innerHTML = `<i class="${photo.is_liked ? 'fas' : 'far'} fa-heart"></i><span id="photo-likes">${photo.likes || 0}</span>`;
         
         modal.classList.add('active');
+        modal.dataset.photoIndex = photoIndex;
         
         // 事件绑定
         document.getElementById('close-photo').onclick = () => modal.classList.remove('active');
         document.getElementById('photo-like').onclick = () => this.toggleLike(photoId);
-        document.getElementById('photo-favorite').onclick = () => this.toggleFavorite(photoId);
         document.getElementById('photo-download').onclick = () => this.downloadPhoto(photo);
+        
+        // 左右切换
+        document.getElementById('photo-modal').onkeydown = (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.prevPhoto();
+            } else if (e.key === 'ArrowRight') {
+                this.nextPhoto();
+            }
+        };
+    }
+    
+    // 上一张照片
+    prevPhoto() {
+        const modal = document.getElementById('photo-modal');
+        if (!modal.classList.contains('active')) return;
+        
+        let currentIndex = parseInt(modal.dataset.photoIndex) || 0;
+        currentIndex = (currentIndex - 1 + this.photos.length) % this.photos.length;
+        
+        const photo = this.photos[currentIndex];
+        this.openPhotoModal(photo.id);
+    }
+    
+    // 下一张照片
+    nextPhoto() {
+        const modal = document.getElementById('photo-modal');
+        if (!modal.classList.contains('active')) return;
+        
+        let currentIndex = parseInt(modal.dataset.photoIndex) || 0;
+        currentIndex = (currentIndex + 1) % this.photos.length;
+        
+        const photo = this.photos[currentIndex];
+        this.openPhotoModal(photo.id);
     }
     
     // 点赞
@@ -493,8 +533,9 @@ class GalleryManager {
                    date.getDate() === day;
         });
         
-        if (dayPhotos.length > 0 && window.slideshowManager) {
-            window.slideshowManager.start(dayPhotos);
+        if (dayPhotos.length > 0) {
+            // 显示第一张照片
+            this.openPhotoModal(dayPhotos[0].id);
         }
     }
     
@@ -504,13 +545,7 @@ class GalleryManager {
         document.querySelectorAll('.nav-btn[data-view]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const view = btn.dataset.view;
-                if (view === 'slideshow') {
-                    if (this.photos.length > 0 && window.slideshowManager) {
-                        window.slideshowManager.start(this.photos);
-                    }
-                } else {
-                    this.switchView(view);
-                }
+                this.switchView(view);
             });
         });
     }
@@ -530,7 +565,13 @@ class GalleryManager {
         });
         document.getElementById(`${view}-view`).classList.add('active');
         
-        this.renderCurrentView();
+        if (view === 'memory') {
+            if (window.memoryManager) {
+                window.memoryManager.loadMemoryPhotos();
+            }
+        } else {
+            this.renderCurrentView();
+        }
     }
     
     // 显示提示

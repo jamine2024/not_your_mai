@@ -930,6 +930,11 @@
                             <option value="500">500条</option>
                         </select>
                     </div>
+                    <div>
+                        <button class="btn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;" onclick="deduplicatePhotos()">
+                            <i class="fas fa-sync-alt"></i> 一键去重
+                        </button>
+                    </div>
                 </div>
                 <div class="photo-actions-bar" id="photo-actions-bar" style="display: none; margin-bottom: 1.5rem;">
                     <div class="actions-left">
@@ -1416,6 +1421,34 @@
         function cancelSelection() {
             selectedPhotoIds.clear();
             updateSelectionUI();
+        }
+        
+        // 一键去重
+        async function deduplicatePhotos() {
+            if (!confirm('确定要执行一键去重吗？系统将保留上传时间最早的照片，删除其他重复照片。')) {
+                return;
+            }
+            
+            const loading = document.getElementById('loading');
+            loading.classList.remove('hidden');
+            
+            try {
+                const response = await fetch('api/gallery.php?action=deduplicate');
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`去重完成！删除了 ${data.deleted_count} 张重复照片。`);
+                    loadPhotos(); // 刷新照片列表
+                    loadStats(); // 刷新统计数据
+                } else {
+                    alert(`去重失败: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('去重失败:', error);
+                alert('去重失败，请刷新重试');
+            } finally {
+                loading.classList.add('hidden');
+            }
         }
         
         // 更新选择UI
