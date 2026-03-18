@@ -497,6 +497,20 @@ function togglePlay() {
     }
 }
 
+// 切换音乐播放列表的收起/展开
+function toggleMusicPlaylist() {
+    const musicPlayer = document.getElementById('music-player');
+    const toggleIcon = document.getElementById('music-toggle-icon');
+    
+    musicPlayer.classList.toggle('minimized');
+    
+    if (musicPlayer.classList.contains('minimized')) {
+        toggleIcon.className = 'fas fa-chevron-down';
+    } else {
+        toggleIcon.className = 'fas fa-chevron-up';
+    }
+}
+
 // AI欢迎语
 function initAIWelcome() {
     const messages = [
