@@ -246,16 +246,79 @@ body.touch-device .effect-card {
         min-width: auto;
     }
     
+    .music-player.collapsed {
+        left: auto;
+        right: 1rem;
+        max-width: 200px;
+        min-width: 150px;
+    }
+    
+    .music-player-header {
+        padding: 0.4rem 0.75rem;
+    }
+    
+    .music-player-toggle {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .music-player-close {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .music-player-content {
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+    }
+    
+    .music-player.collapsed .music-player-content {
+        padding: 0 1rem;
+    }
+    
+    .music-player-collapsed {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .music-player-collapsed span {
+        max-width: 120px;
+        font-size: 0.85rem;
+    }
+    
     .music-player-main {
-        gap: 0.75rem;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+        justify-content: center;
+        padding: 0.5rem 0;
     }
     
-    .music-info {
+    /* 简化版音乐控制按钮 - 移动端 */
+    .music-controls-simple {
+        gap: 1rem;
+    }
+    
+    .music-controls-simple button {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+    
+    /* 收起状态下的控制按钮 - 移动端 */
+    .music-player.collapsed .music-player-collapsed {
+        padding: 0.5rem 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .music-player-collapsed .music-controls-simple {
+        gap: 0.5rem;
+    }
+    
+    .music-player-collapsed .music-controls-simple button {
+        width: 36px;
+        height: 36px;
         font-size: 0.9rem;
-    }
-    
-    .music-volume input {
-        width: 60px;
     }
     
     /* 照片查看器 */

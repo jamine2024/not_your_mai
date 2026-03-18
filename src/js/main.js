@@ -384,40 +384,33 @@ function initMusicPlayer() {
     const audioPlayer = document.getElementById('audio-player');
     if (audioPlayer) {
         audioPlayer.addEventListener('ended', playNextMusic);
+        // 设置默认音量
+        audioPlayer.volume = 0.5;
     }
 }
 
 // 从服务器加载音乐列表
 async function loadMusicList() {
-    const playlist = document.getElementById('music-playlist');
-    if (!playlist) return;
-    
     try {
         const response = await fetch('api/music.php?action=list');
         const data = await response.json();
         
         if (!data.success) {
-            playlist.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">加载失败</p>';
+            console.error('加载音乐列表失败');
             return;
         }
         
         currentMusicList = data.music || [];
         
         if (currentMusicList.length === 0) {
-            playlist.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">暂无音乐</p>';
+            console.log('暂无音乐');
             return;
         }
         
-        playlist.innerHTML = currentMusicList.map((music, index) => `
-            <div class="music-playlist-item ${index === currentMusicIndex ? 'active' : ''}" data-index="${index}" onclick="playMusic(${index})">
-                <i class="fas fa-music"></i>
-                <span>${music.name}</span>
-            </div>
-        `).join('');
+        console.log('音乐列表加载成功:', currentMusicList.length, '首');
         
     } catch (error) {
         console.error('加载音乐失败:', error);
-        playlist.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">加载失败</p>';
     }
 }
 
@@ -428,7 +421,6 @@ function playMusic(index) {
     currentMusicIndex = index;
     const music = currentMusicList[index];
     const audioPlayer = document.getElementById('audio-player');
-    const currentMusicName = document.getElementById('current-music-name');
     
     if (audioPlayer) {
         // 先暂停当前播放
@@ -447,14 +439,8 @@ function playMusic(index) {
         }
     }
     
-    if (currentMusicName) {
-        currentMusicName.textContent = music.name;
-    }
-    
-    // 更新播放列表高亮
-    document.querySelectorAll('.music-playlist-item').forEach((item, i) => {
-        item.classList.toggle('active', i === index);
-    });
+    // 更新音乐名称
+    updateMusicName(music.name);
     
     // 更新播放按钮图标
     updatePlayButtonIcon(true);
@@ -471,8 +457,15 @@ function playNextMusic() {
 // 更新播放按钮图标
 function updatePlayButtonIcon(isPlaying) {
     const playBtn = document.getElementById('music-play');
+    const playBtnCollapsed = document.getElementById('music-play-collapsed');
+    const iconHtml = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+    
     if (playBtn) {
-        playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+        playBtn.innerHTML = iconHtml;
+    }
+    
+    if (playBtnCollapsed) {
+        playBtnCollapsed.innerHTML = iconHtml;
     }
 }
 
@@ -497,18 +490,54 @@ function togglePlay() {
     }
 }
 
-// 切换音乐播放列表的收起/展开
-function toggleMusicPlaylist() {
+// 音乐播放器收起/展开
+let isMusicPlayerCollapsed = false;
+
+function toggleMusicPlayer() {
     const musicPlayer = document.getElementById('music-player');
     const toggleIcon = document.getElementById('music-toggle-icon');
     
-    musicPlayer.classList.toggle('minimized');
+    if (!musicPlayer) return;
     
-    if (musicPlayer.classList.contains('minimized')) {
-        toggleIcon.className = 'fas fa-chevron-down';
+    isMusicPlayerCollapsed = !isMusicPlayerCollapsed;
+    
+    if (isMusicPlayerCollapsed) {
+        musicPlayer.classList.add('collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-chevron-down');
+            toggleIcon.classList.add('fa-chevron-up');
+        }
     } else {
-        toggleIcon.className = 'fas fa-chevron-up';
+        musicPlayer.classList.remove('collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-chevron-up');
+            toggleIcon.classList.add('fa-chevron-down');
+        }
     }
+}
+
+// 关闭音乐播放器
+function closeMusicPlayer() {
+    const musicPlayer = document.getElementById('music-player');
+    const audioPlayer = document.getElementById('audio-player');
+    
+    if (musicPlayer) {
+        musicPlayer.classList.add('hidden');
+        musicPlayer.classList.remove('collapsed');
+        isMusicPlayerCollapsed = false;
+    }
+    
+    if (audioPlayer) {
+        audioPlayer.pause();
+    }
+    
+    updatePlayButtonIcon(false);
+}
+
+// 更新音乐名称（简化版播放器不再需要显示名称）
+function updateMusicName(name) {
+    // 简化版播放器不显示音乐名称
+    console.log('正在播放:', name);
 }
 
 // AI欢迎语

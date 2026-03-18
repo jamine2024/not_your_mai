@@ -1,69 +1,212 @@
 /* 才不是你的小麦 - 回忆页面样式 */
 
 .memory-view {
-    padding: 2rem;
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    padding: 0;
+    z-index: 1;
+}
+
+/* 粒子背景 */
+.memory-particles {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
     overflow: hidden;
 }
 
-.memory-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    z-index: 10;
-    position: relative;
+.memory-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: float 15s infinite;
+    box-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.8),
+        0 0 20px rgba(255, 255, 255, 0.4),
+        0 0 30px rgba(255, 200, 150, 0.3);
 }
 
-.memory-header h2 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--gray-800);
-    margin-bottom: 0.5rem;
-    font-family: 'ZCOOL KuaiLe', cursive;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+/* 不同大小的粒子 */
+.memory-particle:nth-child(3n) {
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 220, 150, 0.9);
+    box-shadow: 
+        0 0 15px rgba(255, 220, 150, 0.9),
+        0 0 30px rgba(255, 200, 100, 0.5);
 }
 
-.memory-header p {
-    font-size: 1.2rem;
-    color: var(--gray-600);
-    margin: 0;
+.memory-particle:nth-child(5n) {
+    width: 3px;
+    height: 3px;
+    background: rgba(200, 220, 255, 0.9);
+    box-shadow: 
+        0 0 10px rgba(200, 220, 255, 0.9),
+        0 0 20px rgba(150, 200, 255, 0.5);
 }
 
-/* 照片墙容器 */
+.memory-particle:nth-child(7n) {
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 180, 200, 0.9);
+    box-shadow: 
+        0 0 12px rgba(255, 180, 200, 0.9),
+        0 0 25px rgba(255, 150, 180, 0.5);
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg) scale(0);
+        opacity: 0;
+    }
+    5% {
+        opacity: 1;
+        transform: translateY(90vh) rotate(36deg) scale(1);
+    }
+    95% {
+        opacity: 1;
+        transform: translateY(-10vh) rotate(684deg) scale(1);
+    }
+    100% {
+        transform: translateY(-20vh) rotate(720deg) scale(0);
+        opacity: 0;
+    }
+}
+
+/* 背景动画效果 */
+.memory-view::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 40%);
+    animation: backgroundPulse 8s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes backgroundPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* 滚动照片墙容器 - 参考手机销售页面 */
+.memory-photo-wall-container {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    pointer-events: none;
+    overflow: hidden;
+    filter: saturate(115%) contrast(96%);
+    animation: wallTiltDrift 140s linear infinite alternate;
+    transform-origin: 50% 50%;
+}
+
+/* 倾斜角度动画 */
+@keyframes wallTiltDrift {
+    0% {
+        transform: rotate(-6deg) translate3d(0, -3%, 0) scale(1.18);
+    }
+    100% {
+        transform: rotate(-6deg) translate3d(-10%, 6%, 0) scale(1.18);
+    }
+}
+
+/* 照片墙 - 多行滚动 */
 .memory-photo-wall {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    z-index: 10;
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 0;
+    will-change: transform;
 }
 
-/* 照片项 */
+/* 滚动行 - 减慢速度 */
+.photo-row {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    will-change: transform;
+    animation: wallSlide 240s linear infinite alternate;
+}
+
+.photo-row:nth-child(2) {
+    animation-duration: 280s;
+}
+
+.photo-row:nth-child(3) {
+    animation-duration: 320s;
+}
+
+.photo-row:nth-child(4) {
+    animation-duration: 260s;
+}
+
+.photo-row:nth-child(5) {
+    animation-duration: 300s;
+}
+
+.photo-row:nth-child(6) {
+    animation-duration: 270s;
+}
+
+.photo-row:nth-child(7) {
+    animation-duration: 330s;
+}
+
+@keyframes wallSlide {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* 照片项 - 统一尺寸 */
 .memory-photo-item {
     position: relative;
+    flex: 0 0 auto;
+    width: 220px;
+    height: 160px;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    aspect-ratio: 4/3;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
     background: white;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .memory-photo-item:hover {
-    transform: translateY(-10px) scale(1.05);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    z-index: 20;
+    transform: translateY(-10px) scale(1.08);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 119, 198, 0.2);
+    z-index: 100;
+    opacity: 1;
 }
 
 .memory-photo-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all 0.3s ease;
+    display: block;
+    transition: all 0.4s ease;
 }
 
 .memory-photo-item:hover img {
@@ -77,7 +220,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,6 +228,7 @@
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
 .memory-preview-overlay.active {
@@ -108,73 +252,31 @@
     max-width: 100%;
     max-height: 80vh;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .memory-preview-close {
     position: absolute;
-    top: -40px;
+    top: -50px;
     right: 0;
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
+    font-size: 1.2rem;
 }
 
 .memory-preview-close:hover {
     transform: scale(1.1);
     background: var(--sakura-pink);
     color: white;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .memory-view {
-        padding: 1rem;
-    }
-
-    .memory-header h2 {
-        font-size: 2rem;
-    }
-
-    .memory-photo-wall {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 1rem;
-    }
-
-    .memory-photo-item {
-        aspect-ratio: 1;
-    }
-
-    .memory-preview-content {
-        max-width: 95%;
-    }
-
-    .memory-preview-content img {
-        max-height: 70vh;
-    }
-}
-
-@media (max-width: 480px) {
-    .memory-header h2 {
-        font-size: 1.8rem;
-    }
-
-    .memory-header p {
-        font-size: 1rem;
-    }
-
-    .memory-photo-wall {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 0.8rem;
-    }
 }
 
 /* 加载动画 */
@@ -184,7 +286,7 @@
     justify-content: center;
     height: 50vh;
     font-size: 1.2rem;
-    color: var(--gray-600);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .memory-loading::after {
@@ -203,25 +305,106 @@
     100% { transform: rotate(360deg); }
 }
 
-/* 背景装饰 */
-.memory-view::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-    background-size: 30px 30px;
-    animation: moveBackground 20s linear infinite;
-    z-index: 1;
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .memory-photo-wall-container {
+        z-index: 99;
+    }
+
+    .photo-row {
+        gap: 8px;
+        animation-duration: 160s;
+    }
+
+    .photo-row:nth-child(2) {
+        animation-duration: 180s;
+    }
+
+    .photo-row:nth-child(3) {
+        animation-duration: 200s;
+    }
+
+    .photo-row:nth-child(4) {
+        animation-duration: 170s;
+    }
+
+    .photo-row:nth-child(5) {
+        animation-duration: 190s;
+    }
+
+    .photo-row:nth-child(6) {
+        animation-duration: 175s;
+    }
+
+    .photo-row:nth-child(7) {
+        animation-duration: 205s;
+    }
+
+    .memory-photo-item {
+        width: 160px;
+        height: 120px;
+        border-radius: 10px;
+    }
+
+    .memory-preview-content {
+        max-width: 95%;
+    }
+
+    .memory-preview-content img {
+        max-height: 70vh;
+    }
+
+    .memory-preview-close {
+        top: -40px;
+        width: 40px;
+        height: 40px;
+    }
 }
 
-@keyframes moveBackground {
-    0% {
-        transform: translate(0, 0);
+@media (max-width: 480px) {
+    .photo-row {
+        gap: 6px;
     }
-    100% {
-        transform: translate(30px, 30px);
+
+    .memory-photo-item {
+        width: 130px;
+        height: 100px;
+        border-radius: 8px;
     }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .photo-row {
+        animation: none !important;
+    }
+    .memory-view::before {
+        animation: none;
+    }
+    .memory-header h2 {
+        animation: none;
+    }
+    .memory-photo-wall-container {
+        animation: none;
+        transform: rotate(-6deg) scale(1.18);
+    }
+}
+
+/* 照片项悬停时的光晕效果 */
+.memory-photo-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.memory-photo-item:hover::before {
+    opacity: 1;
 }
