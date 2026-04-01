@@ -20,7 +20,8 @@ class BaiduImageCensor
      */
     private function loadConfig()
     {
-        $configFile = __DIR__ . '/baidu_censor_config.json';
+        // 优先从data目录加载配置
+        $configFile = __DIR__ . '/../data/baidu_censor_config.json';
         $defaultConfig = [
             'enabled' => false,
             'api_key' => '',

@@ -12,13 +12,18 @@ ob_clean();
 
 // 验证登录状态
 function checkLogin() {
+    // 调试信息
+    error_log('Session check - admin_logged_in: ' . (isset($_SESSION['admin_logged_in']) ? $_SESSION['admin_logged_in'] : 'not set'));
+    error_log('Session check - session_id: ' . session_id());
+    error_log('Session check - all sessions: ' . print_r($_SESSION, true));
+    
     if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
         errorResponse('未登录', 401);
     }
 }
 
-// 配置文件路径
-$configFile = __DIR__ . '/baidu_censor_config.json';
+// 配置文件路径 - 保存到data目录
+$configFile = __DIR__ . '/../data/baidu_censor_config.json';
 
 $action = $_GET['action'] ?? '';
 
@@ -104,6 +109,17 @@ function saveCensorConfig() {
     }
 
     // 保存配置
+    $configDir = dirname($configFile);
+    if (!is_dir($configDir)) {
+        if (!mkdir($configDir, 0755, true)) {
+            errorResponse('创建配置目录失败');
+        }
+    }
+    
+    if (!is_writable($configDir)) {
+        errorResponse('配置目录不可写，请检查权限');
+    }
+    
     if (file_put_contents($configFile, json_encode($config, JSON_PRETTY_PRINT)) === false) {
         errorResponse('保存配置失败');
     }

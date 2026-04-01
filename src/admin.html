@@ -1239,6 +1239,7 @@
             }
             
             // 显示预览
+            const imagePreviews = [];
             imageFiles.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -1250,6 +1251,7 @@
                     img.style.borderRadius = '8px';
                     img.style.margin = '5px';
                     preview.appendChild(img);
+                    imagePreviews.push({ file: file, src: e.target.result });
                 };
                 reader.readAsDataURL(file);
             });
@@ -1263,6 +1265,7 @@
             const BATCH_SIZE = 15;
             let totalUploaded = 0;
             let totalFailed = 0;
+            let failedFiles = [];
             
             for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
                 const batch = imageFiles.slice(i, i + BATCH_SIZE);
@@ -1286,10 +1289,27 @@
                         totalUploaded += data.count || 0;
                     } else {
                         totalFailed += batch.length;
+                        // 记录失败的文件
+                        batch.forEach(f => {
+                            const preview = imagePreviews.find(p => p.file.name === f.name);
+                            failedFiles.push({
+                                name: f.name,
+                                src: preview ? preview.src : '',
+                                message: data.message || '上传失败'
+                            });
+                        });
                     }
                 } catch (error) {
                     console.error('批次上传错误:', error);
                     totalFailed += batch.length;
+                    batch.forEach(f => {
+                        const preview = imagePreviews.find(p => p.file.name === f.name);
+                        failedFiles.push({
+                            name: f.name,
+                            src: preview ? preview.src : '',
+                            message: error.message || '上传失败'
+                        });
+                    });
                 }
                 
                 // 更新进度
@@ -1312,9 +1332,58 @@
                     message = '上传失败，请重试';
                 }
                 
+                // 显示失败原因
+                if (failedFiles.length > 0) {
+                    const failDetails = failedFiles.map(f => `• ${f.name}: ${f.message}`).join('\n');
+                    message += '\n\n失败原因：\n' + failDetails;
+                }
+                
                 alert(message);
                 progressDiv.style.display = 'none';
-                preview.innerHTML = '';
+                
+                // 如果有失败的文件，保留预览并标记失败的图片
+                if (failedFiles.length > 0) {
+                    preview.innerHTML = '';
+                    failedFiles.forEach(fail => {
+                        const failedImg = document.createElement('div');
+                        failedImg.style.display = 'inline-block';
+                        failedImg.style.position = 'relative';
+                        failedImg.style.width = '100px';
+                        failedImg.style.height = '100px';
+                        failedImg.style.margin = '5px';
+                        failedImg.style.borderRadius = '8px';
+                        failedImg.style.overflow = 'hidden';
+                        
+                        const img = document.createElement('img');
+                        img.src = fail.src;
+                        img.style.width = '100px';
+                        img.style.height = '100px';
+                        img.style.objectFit = 'cover';
+                        failedImg.appendChild(img);
+                        
+                        const failBadge = document.createElement('div');
+                        failBadge.style.position = 'absolute';
+                        failBadge.style.top = '0';
+                        failBadge.style.left = '0';
+                        failBadge.style.right = '0';
+                        failBadge.style.bottom = '0';
+                        failBadge.style.background = 'rgba(255, 0, 0, 0.7)';
+                        failBadge.style.display = 'flex';
+                        failBadge.style.alignItems = 'center';
+                        failBadge.style.justifyContent = 'center';
+                        failBadge.style.color = 'white';
+                        failBadge.style.fontSize = '10px';
+                        failBadge.style.textAlign = 'center';
+                        failBadge.style.padding = '2px';
+                        failBadge.textContent = '失败';
+                        failedImg.appendChild(failBadge);
+                        
+                        preview.appendChild(failedImg);
+                    });
+                } else {
+                    preview.innerHTML = '';
+                }
+                
                 loadPhotos(); // 刷新照片列表
                 loadStats(); // 刷新统计数据
             }, 500);
