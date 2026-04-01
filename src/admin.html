@@ -554,13 +554,23 @@
         }
 
         /* 设置页面 */
+        .settings-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+        }
+
         .settings-form {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-radius: var(--radius-lg);
             padding: 2rem;
             box-shadow: var(--shadow-lg);
-            max-width: 600px;
+        }
+
+        .settings-form.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group {
@@ -793,6 +803,10 @@
             .settings-form {
                 padding: 1.5rem;
             }
+
+            .settings-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1023,9 +1037,10 @@
             <!-- 系统设置 -->
             <section class="content-section" id="page-settings">
                 <h1 class="page-title">系统设置</h1>
-                
+
+                <div class="settings-container">
                 <!-- 修改密码 -->
-                <div class="settings-form" style="margin-bottom: 2rem;">
+                <div class="settings-form">
                     <h3 style="margin-bottom: 1.5rem; color: var(--gray-800);">
                         <i class="fas fa-lock" style="color: var(--wheat-gold);"></i>
                         修改登录密码
@@ -1048,7 +1063,7 @@
                 </div>
 
                 <!-- 2FA设置 -->
-                <div class="settings-form" style="margin-bottom: 2rem;">
+                <div class="settings-form">
                     <h3 style="margin-bottom: 1.5rem; color: var(--gray-800);">
                         <i class="fas fa-shield-alt" style="color: var(--sakura-pink);"></i>
                         两步验证设置 (Google Authenticator)
@@ -1155,6 +1170,7 @@
                     <button class="btn btn-secondary" onclick="saveCensorSettings()">
                         <i class="fas fa-save"></i> 保存审核设置
                     </button>
+                </div>
                 </div>
             </section>
         </main>

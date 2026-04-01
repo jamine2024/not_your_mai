@@ -1006,17 +1006,15 @@ function toggleProfilePage() {
     if (isProfilePageVisible) {
         // 显示个人介绍页
         profileView.style.display = 'block';
-        
+
         // 隐藏其他内容
         if (dailyQuote) dailyQuote.style.display = 'none';
         if (statsBar) statsBar.style.display = 'none';
         if (filterTabs) filterTabs.style.display = 'none';
-        
-        // 隐藏当前视图
+
+        // 隐藏所有其他视图
         document.querySelectorAll('.view').forEach(view => {
-            if (view.id !== 'profile-view') {
-                view.classList.remove('active');
-            }
+            view.classList.remove('active');
         });
         
         // 更新个人页统计数据
