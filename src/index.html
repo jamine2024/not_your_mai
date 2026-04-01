@@ -69,42 +69,81 @@
             </button>
         </div>
 
-        <!-- 移动端操作菜单按钮 -->
-        <button class="mobile-actions-toggle" id="mobile-actions-toggle" title="更多操作">
-            <i class="fas fa-ellipsis-v"></i>
-        </button>
+    </nav>
 
-        <!-- 移动端操作菜单 -->
-        <div class="mobile-actions-menu" id="mobile-actions-menu">
-            <button class="mobile-action-btn" id="mobile-upload-btn" title="上传照片">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <span>上传</span>
-            </button>
-            <button class="mobile-action-btn" id="mobile-effect-btn" title="特效模式">
-                <i class="fas fa-magic"></i>
-                <span>特效</span>
-            </button>
-            <button class="mobile-action-btn" id="mobile-music-btn" title="音乐">
-                <i class="fas fa-music"></i>
-                <span>音乐</span>
-            </button>
-            <button class="mobile-action-btn" id="mobile-login-btn" title="管理员登录">
-                <i class="fas fa-user-shield"></i>
-                <span>登录</span>
-            </button>
-            <button class="mobile-action-btn hidden" id="mobile-logout-btn" title="退出登录">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>退出</span>
-            </button>
-            <button class="mobile-action-btn" id="mobile-profile-btn" title="个人主页">
-                <i class="fas fa-user-circle"></i>
-                <span>我的</span>
+    <!-- 移动端悬浮菜单按钮 -->
+    <button class="mobile-fab-menu" id="mobile-fab-menu" title="菜单">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- 移动端侧边栏菜单 -->
+    <div class="mobile-sidebar" id="mobile-sidebar">
+        <div class="mobile-sidebar-header">
+            <div class="mobile-sidebar-brand">
+                <i class="fas fa-wheat-awn"></i>
+                <span>小麦</span>
+            </div>
+            <button class="mobile-sidebar-close" id="mobile-sidebar-close">
+                <i class="fas fa-times"></i>
             </button>
         </div>
+        <div class="mobile-sidebar-content">
+            <div class="mobile-sidebar-section">
+                <h4>功能</h4>
+                <button class="mobile-sidebar-btn" id="mobile-upload-btn">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>上传照片</span>
+                </button>
+                <button class="mobile-sidebar-btn" id="mobile-effect-btn">
+                    <i class="fas fa-magic"></i>
+                    <span>特效模式</span>
+                </button>
+                <button class="mobile-sidebar-btn" id="mobile-music-btn">
+                    <i class="fas fa-music"></i>
+                    <span>音乐播放器</span>
+                </button>
+            </div>
+            <div class="mobile-sidebar-section">
+                <h4>个人</h4>
+                <button class="mobile-sidebar-btn" id="mobile-login-btn">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理员登录</span>
+                </button>
+                <button class="mobile-sidebar-btn hidden" id="mobile-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>退出登录</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
-        <!-- 移动端菜单遮罩 -->
-        <div class="mobile-actions-overlay" id="mobile-actions-overlay"></div>
+    <!-- 移动端侧边栏遮罩 -->
+    <div class="mobile-sidebar-overlay" id="mobile-sidebar-overlay"></div>
+
+    <!-- 移动端底部导航栏 -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <button class="mobile-nav-btn active" data-view="day">
+            <i class="fas fa-calendar-day"></i>
+            <span>按天</span>
+        </button>
+        <button class="mobile-nav-btn" data-view="ranking">
+            <i class="fas fa-heart"></i>
+            <span>排行榜</span>
+        </button>
+        <button class="mobile-nav-btn" data-view="memory">
+            <i class="fas fa-history"></i>
+            <span>回忆</span>
+        </button>
+        <button class="mobile-nav-btn" data-view="profile">
+            <i class="fas fa-user"></i>
+            <span>我的</span>
+        </button>
     </nav>
+
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="back-to-top" title="返回顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <!-- AI女友欢迎语 -->
     <div class="ai-welcome" id="ai-welcome">
@@ -442,18 +481,14 @@
             </div>
             <div class="photo-viewer">
                 <img id="photo-image" src="" alt="">
-                <div class="photo-info">
-                    <h3 id="photo-title"></h3>
-                    <p id="photo-date"></p>
-                    <div class="photo-actions">
-                        <button class="photo-action" id="photo-like">
-                            <i class="fas fa-heart"></i>
-                            <span id="photo-likes">0</span>
-                        </button>
-                        <button class="photo-action" id="photo-download">
-                            <i class="fas fa-download"></i>
-                        </button>
-                    </div>
+                <div class="photo-info-compact">
+                    <button class="photo-action" id="photo-like">
+                        <i class="fas fa-heart"></i>
+                        <span id="photo-likes">0</span>
+                    </button>
+                    <button class="photo-action" id="photo-download">
+                        <i class="fas fa-download"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -461,32 +496,18 @@
 
 
 
-    <!-- 音乐播放器 -->
+    <!-- 音乐播放器 - 简化小卡片 -->
     <div class="music-player hidden" id="music-player">
-        <div class="music-player-header">
-            <div class="music-player-toggle" onclick="toggleMusicPlayer()">
-                <i class="fas fa-chevron-down" id="music-toggle-icon"></i>
+        <div class="music-player-mini">
+            <div class="music-controls-simple">
+                <button id="music-play" onclick="togglePlay()" title="播放/暂停"><i class="fas fa-play"></i></button>
+                <button id="music-next" onclick="playNextMusic()" title="下一曲"><i class="fas fa-step-forward"></i></button>
             </div>
-            <button class="music-player-close" onclick="closeMusicPlayer()">
+            <button class="music-player-close-mini" onclick="closeMusicPlayer()" title="关闭">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="music-player-content" id="music-player-content">
-            <div class="music-player-main">
-                <div class="music-controls-simple">
-                    <button id="music-play" onclick="togglePlay()" title="播放/暂停"><i class="fas fa-play"></i></button>
-                    <button id="music-next" onclick="playNextMusic()" title="下一曲"><i class="fas fa-step-forward"></i></button>
-                </div>
-            </div>
-            <audio id="audio-player"></audio>
-        </div>
-        <!-- 收起状态显示 -->
-        <div class="music-player-collapsed" id="music-player-collapsed" onclick="toggleMusicPlayer()">
-            <div class="music-controls-simple">
-                <button id="music-play-collapsed" onclick="event.stopPropagation(); togglePlay()" title="播放/暂停"><i class="fas fa-play"></i></button>
-                <button id="music-next-collapsed" onclick="event.stopPropagation(); playNextMusic()" title="下一曲"><i class="fas fa-step-forward"></i></button>
-            </div>
-        </div>
+        <audio id="audio-player"></audio>
     </div>
 
     <!-- 加载动画 -->

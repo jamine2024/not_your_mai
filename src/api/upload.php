@@ -5,11 +5,16 @@
 ob_start();
 
 require_once 'config.php';
+require_once 'BaiduImageCensor.php';
 
 // 只允许POST请求
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     errorResponse('请求方法不允许', 405);
 }
+
+// 初始化百度图片审核
+$censor = new BaiduImageCensor();
+$enableCensor = $censor->isConfigured();
 
 // 检查并创建上传目录
 $originalDir = $upload_config['original_path'];
@@ -120,7 +125,18 @@ function processUpload($file) {
         $error = error_get_last();
         return ['success' => false, 'message' => '保存文件失败: ' . $originalPath . ' - ' . ($error['message'] ?? '未知错误')];
     }
-    
+
+    // 百度图片内容审核
+    global $enableCensor, $censor;
+    if ($enableCensor) {
+        $censorResult = $censor->censor($originalPath);
+        if ($censorResult['success'] && $censorResult['is_violation']) {
+            // 删除违规图片
+            @unlink($originalPath);
+            return ['success' => false, 'message' => '图片审核未通过: ' . $censorResult['message']];
+        }
+    }
+
     // 生成缩略图
     createThumbnail($originalPath, $thumbPath, $upload_config['thumb_width'], $upload_config['thumb_height']);
     

@@ -41,6 +41,14 @@ class MemoryManager {
     }
 
     async loadMemoryPhotos() {
+        // 优先加载音乐
+        if (typeof loadMusicList === 'function') {
+            await loadMusicList();
+        }
+
+        // 立即尝试自动播放音乐
+        this.autoPlayMusic();
+
         try {
             // 加载所有照片
             const response = await fetch('api/gallery.php?action=list&per_page=99999');
@@ -49,7 +57,6 @@ class MemoryManager {
             if (data.success) {
                 this.photos = data.photos || [];
                 this.renderPhotoWall();
-                this.autoPlayMusic();
             }
         } catch (error) {
             console.error('加载照片失败:', error);
@@ -68,11 +75,11 @@ class MemoryManager {
             return;
         }
 
-        // 计算需要的行数 - 增加到7排
+        // 计算需要的行数 - 增加到10排，防止大屏底部空白
         const vh = window.innerHeight || document.documentElement.clientHeight || 800;
         const tileH = 160;
         const gap = 12;
-        const rows = Math.max(7, Math.ceil(vh / (tileH + gap)));
+        const rows = Math.max(10, Math.ceil(vh / (tileH + gap)));
         
         // 将照片分配给各行
         const chunkSize = Math.ceil(this.photos.length / rows);
@@ -184,19 +191,25 @@ class MemoryManager {
         if (musicPlayer) {
             musicPlayer.classList.remove('hidden');
         }
-        
+
         // 检查是否有音乐
         if (typeof currentMusicList !== 'undefined' && currentMusicList.length > 0) {
             // 随机选择一首音乐播放
             const randomIndex = Math.floor(Math.random() * currentMusicList.length);
-            playMusic(randomIndex);
+            // 延迟一点播放，确保音频元素准备好
+            setTimeout(() => {
+                playMusic(randomIndex);
+            }, 100);
         } else {
             // 尝试加载音乐列表
             if (typeof loadMusicList === 'function') {
                 loadMusicList().then(() => {
                     if (currentMusicList.length > 0) {
                         const randomIndex = Math.floor(Math.random() * currentMusicList.length);
-                        playMusic(randomIndex);
+                        // 延迟一点播放，确保音频元素准备好
+                        setTimeout(() => {
+                            playMusic(randomIndex);
+                        }, 100);
                     }
                 });
             }
@@ -209,6 +222,27 @@ window.memoryManager = new MemoryManager();
 
 // 当回忆页面被激活时加载照片
 function switchToMemoryView() {
+    // 先切换视图
+    document.querySelectorAll('.view').forEach(v => {
+        v.classList.remove('active');
+    });
+
+    const memoryView = document.getElementById('memory-view');
+    if (memoryView) {
+        memoryView.classList.add('active');
+    }
+
+    // 更新导航按钮状态
+    document.querySelectorAll('.nav-btn[data-view]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === 'memory');
+    });
+
+    // 更新移动端底部导航按钮状态
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === 'memory');
+    });
+
+    // 加载照片和音乐
     if (window.memoryManager) {
         window.memoryManager.loadMemoryPhotos();
     }

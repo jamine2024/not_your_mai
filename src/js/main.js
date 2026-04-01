@@ -423,19 +423,29 @@ function playMusic(index) {
     const audioPlayer = document.getElementById('audio-player');
     
     if (audioPlayer) {
-        // 先暂停当前播放
-        audioPlayer.pause();
-        audioPlayer.currentTime = 0;
-        
         // 设置新音频源
         audioPlayer.src = music.url;
         
-        // 播放新音频
-        const playPromise = audioPlayer.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.error('播放失败:', error);
-            });
+        // 播放新音频 - 使用loadeddata事件确保音频准备好后再播放
+        const playAudio = () => {
+            const playPromise = audioPlayer.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error('播放失败:', error);
+                    // 如果是自动播放策略限制，更新按钮为播放状态
+                    if (error.name === 'NotAllowedError') {
+                        updatePlayButtonIcon(false);
+                    }
+                });
+            }
+        };
+        
+        // 如果音频已经加载，直接播放
+        if (audioPlayer.readyState >= 2) {
+            playAudio();
+        } else {
+            // 等待音频加载完成
+            audioPlayer.addEventListener('loadeddata', playAudio, { once: true });
         }
     }
     
@@ -516,22 +526,21 @@ function toggleMusicPlayer() {
     }
 }
 
-// 关闭音乐播放器
+// 关闭音乐播放器（仅隐藏，不暂停音乐）
 function closeMusicPlayer() {
     const musicPlayer = document.getElementById('music-player');
     const audioPlayer = document.getElementById('audio-player');
-    
+
     if (musicPlayer) {
         musicPlayer.classList.add('hidden');
         musicPlayer.classList.remove('collapsed');
         isMusicPlayerCollapsed = false;
     }
-    
-    if (audioPlayer) {
-        audioPlayer.pause();
+
+    // 如果音乐正在播放，更新播放按钮为暂停图标（表示可以暂停）
+    if (audioPlayer && !audioPlayer.paused) {
+        updatePlayButtonIcon(true);
     }
-    
-    updatePlayButtonIcon(false);
 }
 
 // 更新音乐名称（简化版播放器不再需要显示名称）
@@ -726,6 +735,9 @@ function renderView(view) {
         case 'month':
             renderMonthView();
             break;
+        case 'ranking':
+            renderRankingView();
+            break;
         case 'memory':
             if (window.memoryManager) {
                 window.memoryManager.loadMemoryPhotos();
@@ -834,12 +846,12 @@ function renderWeekView() {
 function renderMonthView() {
     const container = document.getElementById('month-calendar');
     if (!container) return;
-    
+
     if (photosData.length === 0) {
         container.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>还没有照片，快去上传吧~</p></div>';
         return;
     }
-    
+
     // 按月分组
     const months = {};
     photosData.forEach(photo => {
@@ -848,14 +860,14 @@ function renderMonthView() {
         if (!months[monthKey]) months[monthKey] = [];
         months[monthKey].push(photo);
     });
-    
+
     const sortedMonths = Object.keys(months).sort((a, b) => b.localeCompare(a));
-    
+
     container.innerHTML = sortedMonths.map(monthKey => {
         const photos = months[monthKey];
         const [year, month] = monthKey.split('-');
         const date = new Date(year, month - 1);
-        
+
         return `
             <div class="month-card">
                 <h4 class="month-title">${date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}</h4>
@@ -872,35 +884,74 @@ function renderMonthView() {
     }).join('');
 }
 
+// 排行榜视图
+function renderRankingView() {
+    const container = document.getElementById('ranking-grid');
+    if (!container) return;
+
+    if (photosData.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>还没有照片，快去上传吧~</p></div>';
+        return;
+    }
+
+    // 按点赞数排序，取前30张
+    const sortedPhotos = [...photosData]
+        .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+        .slice(0, 30);
+
+    container.innerHTML = sortedPhotos.map((photo, index) => `
+        <div class="ranking-item" onclick="openPhotoModal(${photo.id})">
+            <div class="ranking-number">${index + 1}</div>
+            <div class="ranking-photo">
+                <img src="${photo.thumb_path}" alt="">
+            </div>
+            <div class="ranking-info">
+                <span class="ranking-likes"><i class="fas fa-heart"></i> ${photo.likes || 0}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
 // 打开照片详情
 function openPhotoModal(photoId) {
     const photo = photosData.find(p => p.id == photoId);
     if (!photo) return;
-    
+
     const modal = document.getElementById('photo-modal');
     const img = document.getElementById('photo-image');
-    const title = document.getElementById('photo-title');
-    const date = document.getElementById('photo-date');
     const likes = document.getElementById('photo-likes');
-    
+
+    // 显示加载动画
+    img.style.opacity = '0.5';
+    img.parentElement.classList.add('loading');
+
     img.src = photo.file_path;
-    title.textContent = photo.original_name;
-    date.textContent = new Date(photo.taken_at || photo.uploaded_at).toLocaleString('zh-CN');
     likes.textContent = photo.likes || 0;
-    
+
+    // 图片加载完成后隐藏加载动画
+    img.onload = () => {
+        img.style.opacity = '1';
+        img.parentElement.classList.remove('loading');
+    };
+
+    img.onerror = () => {
+        img.style.opacity = '1';
+        img.parentElement.classList.remove('loading');
+    };
+
     // 绑定点赞按钮
     const likeBtn = document.getElementById('photo-like');
     likeBtn.onclick = () => toggleLike(photoId);
-    
+
     // 绑定关闭按钮
     document.getElementById('close-photo').onclick = () => {
         modal.classList.remove('active');
     };
-    
+
     // 绑定下载按钮
     const downloadBtn = document.getElementById('photo-download');
     downloadBtn.onclick = () => downloadPhoto(photo.file_path, photo.original_name);
-    
+
     modal.classList.add('active');
 }
 
@@ -1013,95 +1064,219 @@ function sendMessage() {
     showToast('给小麦发消息吧！\nQQ：3889687544', 'info');
 }
 
-// 移动端操作菜单功能
-let isMobileMenuOpen = false;
+// 移动端侧边栏菜单功能
+let isMobileSidebarOpen = false;
 
 function initMobileActionsMenu() {
-    const toggleBtn = document.getElementById('mobile-actions-toggle');
-    const menu = document.getElementById('mobile-actions-menu');
-    const overlay = document.getElementById('mobile-actions-overlay');
-    
-    if (!toggleBtn || !menu || !overlay) return;
-    
-    // 切换菜单显示/隐藏
-    toggleBtn.addEventListener('click', () => {
-        isMobileMenuOpen = !isMobileMenuOpen;
-        toggleMobileMenu(isMobileMenuOpen);
+    const fabBtn = document.getElementById('mobile-fab-menu');
+    const sidebar = document.getElementById('mobile-sidebar');
+    const overlay = document.getElementById('mobile-sidebar-overlay');
+    const closeBtn = document.getElementById('mobile-sidebar-close');
+
+    // 初始化底部导航
+    initMobileBottomNav();
+
+    // 初始化悬浮按钮拖动
+    initFabDrag();
+
+    if (!fabBtn || !sidebar || !overlay) return;
+
+    // 切换侧边栏显示/隐藏
+    fabBtn.addEventListener('click', () => {
+        isMobileSidebarOpen = !isMobileSidebarOpen;
+        toggleMobileSidebar(isMobileSidebarOpen);
     });
-    
-    // 点击遮罩关闭菜单
+
+    // 点击关闭按钮关闭侧边栏
+    closeBtn?.addEventListener('click', () => {
+        isMobileSidebarOpen = false;
+        toggleMobileSidebar(false);
+    });
+
+    // 点击遮罩关闭侧边栏
     overlay.addEventListener('click', () => {
-        isMobileMenuOpen = false;
-        toggleMobileMenu(false);
+        isMobileSidebarOpen = false;
+        toggleMobileSidebar(false);
     });
-    
+
     // 移动端操作按钮事件绑定
     initMobileActionButtons();
 }
 
-function toggleMobileMenu(show) {
-    const toggleBtn = document.getElementById('mobile-actions-toggle');
-    const menu = document.getElementById('mobile-actions-menu');
-    const overlay = document.getElementById('mobile-actions-overlay');
-    
+// 悬浮按钮拖动功能
+function initFabDrag() {
+    const fabBtn = document.getElementById('mobile-fab-menu');
+    if (!fabBtn) return;
+
+    let isDragging = false;
+    let startX, startY, initialX, initialY;
+
+    fabBtn.addEventListener('touchstart', (e) => {
+        isDragging = false;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        initialX = fabBtn.offsetLeft;
+        initialY = fabBtn.offsetTop;
+    }, { passive: true });
+
+    fabBtn.addEventListener('touchmove', (e) => {
+        isDragging = true;
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+
+        let newX = initialX + dx;
+        let newY = initialY + dy;
+
+        // 限制在屏幕范围内
+        const maxX = window.innerWidth - fabBtn.offsetWidth - 16;
+        const maxY = window.innerHeight - fabBtn.offsetHeight - 80;
+        newX = Math.max(16, Math.min(newX, maxX));
+        newY = Math.max(16, Math.min(newY, maxY));
+
+        fabBtn.style.left = newX + 'px';
+        fabBtn.style.right = 'auto';
+        fabBtn.style.top = newY + 'px';
+        fabBtn.style.bottom = 'auto';
+    }, { passive: true });
+
+    fabBtn.addEventListener('touchend', () => {
+        if (isDragging) {
+            // 吸附到左右边缘
+            const rect = fabBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const screenCenter = window.innerWidth / 2;
+
+            if (centerX < screenCenter) {
+                fabBtn.style.left = '16px';
+                fabBtn.style.right = 'auto';
+            } else {
+                fabBtn.style.left = 'auto';
+                fabBtn.style.right = '16px';
+            }
+        }
+    });
+}
+
+// 初始化返回顶部按钮
+function initBackToTop() {
+    const backToTopBtn = document.getElementById('back-to-top');
+    if (!backToTopBtn) return;
+
+    // 只在按天/排行榜/我的界面显示
+    const showInViews = ['day', 'ranking', 'profile'];
+
+    // 监听滚动事件
+    window.addEventListener('scroll', () => {
+        const currentView = document.querySelector('.view.active')?.id;
+        const viewName = currentView?.replace('-view', '');
+
+        // 检查是否在支持的视图中且滚动超过300px
+        if (showInViews.includes(viewName) && window.scrollY > 300) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+    }, { passive: true });
+
+    // 点击返回顶部
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
+
+function toggleMobileSidebar(show) {
+    const fabBtn = document.getElementById('mobile-fab-menu');
+    const sidebar = document.getElementById('mobile-sidebar');
+    const overlay = document.getElementById('mobile-sidebar-overlay');
+
     if (show) {
-        toggleBtn.classList.add('active');
-        menu.classList.add('active');
-        overlay.classList.add('active');
+        fabBtn?.classList.add('active');
+        sidebar?.classList.add('active');
+        overlay?.classList.add('active');
         document.body.style.overflow = 'hidden';
     } else {
-        toggleBtn.classList.remove('active');
-        menu.classList.remove('active');
-        overlay.classList.remove('active');
+        fabBtn?.classList.remove('active');
+        sidebar?.classList.remove('active');
+        overlay?.classList.remove('active');
         document.body.style.overflow = '';
     }
+}
+
+// 移动端底部导航功能
+function initMobileBottomNav() {
+    const bottomNav = document.getElementById('mobile-bottom-nav');
+    if (!bottomNav) return;
+
+    const navBtns = bottomNav.querySelectorAll('.mobile-nav-btn');
+
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const view = btn.dataset.view;
+
+            // 更新按钮激活状态
+            navBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // 切换视图
+            switch (view) {
+                case 'day':
+                    switchView('day');
+                    break;
+                case 'ranking':
+                    switchView('ranking');
+                    break;
+                case 'memory':
+                    switchToMemoryView();
+                    break;
+                case 'profile':
+                    toggleProfilePage();
+                    break;
+            }
+        });
+    });
 }
 
 function initMobileActionButtons() {
     // 上传按钮
     const mobileUploadBtn = document.getElementById('mobile-upload-btn');
     mobileUploadBtn?.addEventListener('click', () => {
-        toggleMobileMenu(false);
+        toggleMobileSidebar(false);
         // 触发桌面端上传按钮的点击事件
         document.getElementById('upload-btn')?.click();
     });
-    
+
     // 特效按钮
     const mobileEffectBtn = document.getElementById('mobile-effect-btn');
     mobileEffectBtn?.addEventListener('click', () => {
-        toggleMobileMenu(false);
+        toggleMobileSidebar(false);
         document.getElementById('effect-btn')?.click();
     });
-    
+
     // 音乐按钮
     const mobileMusicBtn = document.getElementById('mobile-music-btn');
     mobileMusicBtn?.addEventListener('click', () => {
-        toggleMobileMenu(false);
+        toggleMobileSidebar(false);
         document.getElementById('music-btn')?.click();
     });
-    
+
     // 登录按钮
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     mobileLoginBtn?.addEventListener('click', () => {
-        toggleMobileMenu(false);
+        toggleMobileSidebar(false);
         window.location.href = 'login.html';
     });
-    
+
     // 退出按钮
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     mobileLogoutBtn?.addEventListener('click', () => {
-        toggleMobileMenu(false);
+        toggleMobileSidebar(false);
         sessionStorage.removeItem('admin_logged_in');
         sessionStorage.removeItem('login_time');
         updateLoginUI();
         alert('已退出登录');
-    });
-    
-    // 个人主页按钮
-    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
-    mobileProfileBtn?.addEventListener('click', () => {
-        toggleMobileMenu(false);
-        toggleProfilePage();
     });
 }
 
@@ -1124,4 +1299,5 @@ function updateMobileLoginUI() {
 document.addEventListener('DOMContentLoaded', () => {
     initMobileActionsMenu();
     updateMobileLoginUI();
+    initBackToTop();
 });

@@ -397,26 +397,40 @@ class GalleryManager {
     openPhotoModal(photoId) {
         const photo = this.photos.find(p => p.id == photoId);
         if (!photo) return;
-        
+
         const modal = document.getElementById('photo-modal');
         const photoIndex = this.photos.findIndex(p => p.id == photoId);
-        
-        document.getElementById('photo-image').src = photo.file_path;
-        document.getElementById('photo-title').textContent = photo.title || '未命名';
-        document.getElementById('photo-date').textContent = new Date(photo.taken_at || photo.uploaded_at).toLocaleString('zh-CN');
+        const img = document.getElementById('photo-image');
+
+        // 显示加载动画
+        img.style.opacity = '0.5';
+        img.parentElement.classList.add('loading');
+
+        img.src = photo.file_path;
         document.getElementById('photo-likes').textContent = photo.likes || 0;
-        
+
+        // 图片加载完成后隐藏加载动画
+        img.onload = () => {
+            img.style.opacity = '1';
+            img.parentElement.classList.remove('loading');
+        };
+
+        img.onerror = () => {
+            img.style.opacity = '1';
+            img.parentElement.classList.remove('loading');
+        };
+
         const likeBtn = document.getElementById('photo-like');
         likeBtn.innerHTML = `<i class="${photo.is_liked ? 'fas' : 'far'} fa-heart"></i><span id="photo-likes">${photo.likes || 0}</span>`;
-        
+
         modal.classList.add('active');
         modal.dataset.photoIndex = photoIndex;
-        
+
         // 事件绑定
         document.getElementById('close-photo').onclick = () => modal.classList.remove('active');
         document.getElementById('photo-like').onclick = () => this.toggleLike(photoId);
         document.getElementById('photo-download').onclick = () => this.downloadPhoto(photo);
-        
+
         // 左右切换
         document.getElementById('photo-modal').onkeydown = (e) => {
             if (e.key === 'ArrowLeft') {
