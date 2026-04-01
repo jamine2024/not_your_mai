@@ -4,11 +4,6 @@
 // 开启输出缓冲，防止任何意外输出破坏JSON
 ob_start();
 
-// 启动session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 require_once 'config.php';
 require_once '2fa.php';
 
