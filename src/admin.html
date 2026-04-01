@@ -1279,7 +1279,8 @@
                 try {
                     const response = await fetch('api/upload.php', {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        credentials: 'include'
                     });
                     
                     const data = await response.json();
@@ -1530,11 +1531,12 @@
                 const response = await fetch('api/gallery.php?action=delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ photo_id: id })
+                    body: JSON.stringify({ photo_id: id }),
+                    credentials: 'include'
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     alert('删除成功');
                     loadPhotos();
@@ -1547,7 +1549,7 @@
                 alert('删除失败，请重试');
             }
         }
-        
+
         // 批量删除选中照片
         async function deleteSelectedPhotos() {
             const count = selectedPhotoIds.size;
@@ -1563,11 +1565,12 @@
                     const response = await fetch('api/gallery.php?action=delete', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ photo_id: id })
+                        body: JSON.stringify({ photo_id: id }),
+                        credentials: 'include'
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (data.success) {
                         successCount++;
                     } else {
@@ -1647,9 +1650,10 @@
                     body: JSON.stringify({
                         current_password: currentPwd,
                         new_password: newPwd
-                    })
+                    }),
+                    credentials: 'include'
                 });
-                
+
                 const data = await response.json();
                 
                 if (data.success) {
@@ -1799,9 +1803,10 @@
                 const response = await fetch('api/2fa.php?action=verify_setup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `code=${code}&secret=${current2FASecret}`
+                    body: `code=${code}&secret=${current2FASecret}`,
+                    credentials: 'include'
                 });
-                
+
                 const data = await response.json();
                 
                 if (data.success) {
@@ -1861,7 +1866,9 @@
         // 加载百度审核设置
         async function loadCensorSettings() {
             try {
-                const response = await fetch('api/censor.php?action=get');
+                const response = await fetch('api/censor.php?action=get', {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 if (data.success) {
                     document.getElementById('censor-enabled').checked = data.config.enabled || false;
@@ -1885,7 +1892,8 @@
                 const response = await fetch('api/censor.php?action=save', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(config)
+                    body: JSON.stringify(config),
+                    credentials: 'include'
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -1945,9 +1953,10 @@
                 try {
                     const response = await fetch('api/music.php?action=upload', {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        credentials: 'include'
                     });
-                    
+
                     const data = await response.json();
                     
                     if (data.success) {
@@ -2046,9 +2055,10 @@
                 const response = await fetch('api/music.php?action=delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `id=${id}`
+                    body: `id=${id}`,
+                    credentials: 'include'
                 });
-                
+
                 const data = await response.json();
                 
                 if (data.success) {

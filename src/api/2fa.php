@@ -1,6 +1,11 @@
 <?php
 // 才不是你的小麦 - 两步验证 (TOTP/Google Authenticator)
 
+// 设置 Session Cookie 参数，支持跨域
+ini_set('session.cookie_samesite', 'None');
+ini_set('session.cookie_secure', 'true');
+ini_set('session.cookie_httponly', 'true');
+
 session_start();
 
 // 数据存储路径
