@@ -128,13 +128,41 @@ function processUpload($file) {
 
     // 百度图片内容审核
     global $enableCensor, $censor;
+    $censorStatus = '未启用';
+    $censorMessage = '';
+
     if ($enableCensor) {
         $censorResult = $censor->censor($originalPath);
-        if ($censorResult['success'] && $censorResult['is_violation']) {
-            // 删除违规图片
-            @unlink($originalPath);
-            return ['success' => false, 'message' => '图片审核未通过: ' . $censorResult['message']];
+
+        // 记录审核日志
+        $logMessage = date('Y-m-d H:i:s') . ' - 图片审核: ' . $file['name'];
+
+        if ($censorResult['success']) {
+            if ($censorResult['is_violation']) {
+                $censorStatus = '未通过';
+                $censorMessage = $censorResult['message'];
+                $logMessage .= ' - 状态: 未通过 - 原因: ' . $censorMessage;
+
+                // 删除违规图片
+                @unlink($originalPath);
+
+                // 写入日志
+                error_log($logMessage . PHP_EOL, 3, __DIR__ . '/censor.log');
+
+                return ['success' => false, 'message' => '图片审核未通过: ' . $censorMessage];
+            } else {
+                $censorStatus = '通过';
+                $censorMessage = '审核通过';
+                $logMessage .= ' - 状态: 通过';
+            }
+        } else {
+            $censorStatus = '失败';
+            $censorMessage = $censorResult['message'];
+            $logMessage .= ' - 状态: 失败 - 原因: ' . $censorMessage;
         }
+
+        // 写入日志
+        error_log($logMessage . PHP_EOL, 3, __DIR__ . '/censor.log');
     }
 
     // 生成缩略图
@@ -165,20 +193,30 @@ function processUpload($file) {
         ]);
         
         $photoId = $db->lastInsertId();
-        
+
+        // 构建返回数据，包含审核状态
+        $resultData = [
+            'id' => $photoId,
+            'filename' => $filename,
+            'original_name' => $file['name'],
+            'file_path' => 'uploads/original/' . $filename,
+            'thumb_path' => 'uploads/thumbs/' . $thumbFilename,
+            'width' => $width,
+            'height' => $height,
+            'taken_at' => $takenAt,
+            'uploaded_at' => date('Y-m-d H:i:s')
+        ];
+
+        // 添加审核状态信息
+        global $censorStatus, $censorMessage;
+        if ($censorStatus !== '未启用') {
+            $resultData['censor_status'] = $censorStatus;
+            $resultData['censor_message'] = $censorMessage;
+        }
+
         return [
             'success' => true,
-            'data' => [
-                'id' => $photoId,
-                'filename' => $filename,
-                'original_name' => $file['name'],
-                'file_path' => 'uploads/original/' . $filename,
-                'thumb_path' => 'uploads/thumbs/' . $thumbFilename,
-                'width' => $width,
-                'height' => $height,
-                'taken_at' => $takenAt,
-                'uploaded_at' => date('Y-m-d H:i:s')
-            ]
+            'data' => $resultData
         ];
     } catch (PDOException $e) {
         // 删除已上传的文件

@@ -10,9 +10,34 @@ class BaiduImageCensor
 
     public function __construct()
     {
-        $this->config = require 'baidu_censor_config.php';
+        $this->config = $this->loadConfig();
         $this->tokenFile = __DIR__ . '/baidu_token.cache';
         $this->accessToken = $this->getAccessToken();
+    }
+
+    /**
+     * 加载配置
+     */
+    private function loadConfig()
+    {
+        $configFile = __DIR__ . '/baidu_censor_config.json';
+        $defaultConfig = [
+            'enabled' => false,
+            'api_key' => '',
+            'secret_key' => '',
+            'api_url' => 'https://aip.baidubce.com/rest/2.0/solution/v1/img_censor/v2/user_defined',
+            'token_url' => 'https://aip.baidubce.com/oauth/2.0/token',
+        ];
+
+        if (file_exists($configFile)) {
+            $content = file_get_contents($configFile);
+            $savedConfig = json_decode($content, true);
+            if ($savedConfig) {
+                return array_merge($defaultConfig, $savedConfig);
+            }
+        }
+
+        return $defaultConfig;
     }
 
     /**
@@ -87,7 +112,27 @@ class BaiduImageCensor
 
         // 判断是URL还是本地文件
         if (filter_var($imagePath, FILTER_VALIDATE_URL)) {
-            $imgBase64 = base64_encode(file_get_contents($imagePath));
+            // 使用cURL获取远程图片，更安全
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $imagePath);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false); // 禁止重定向
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $imgData = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode !== 200 || $imgData === false) {
+                return [
+                    'success' => false,
+                    'is_violation' => false,
+                    'message' => '获取远程图片失败: HTTP ' . $httpCode,
+                    'data' => null
+                ];
+            }
+
+            $imgBase64 = base64_encode($imgData);
         } else {
             if (!file_exists($imagePath)) {
                 return [

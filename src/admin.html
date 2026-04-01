@@ -715,6 +715,15 @@
                 font-size: 0.75rem;
             }
             
+            .admin-actions {
+                gap: 0.5rem;
+            }
+
+            .admin-actions .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
             .admin-actions .btn span {
                 display: none;
             }
@@ -1120,6 +1129,34 @@
                     </div>
                     <button class="btn btn-secondary" onclick="saveSiteSettings()">
                         <i class="fas fa-save"></i> 保存设置
+                    </button>
+                </div>
+
+                <!-- 百度内容审核设置 -->
+                <div class="settings-form" style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--gray-800);">
+                        <i class="fas fa-shield-alt" style="color: var(--gray-600);"></i>
+                        百度内容审核
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="censor-enabled" style="margin-right: 0.5rem;">
+                            启用图片内容审核
+                        </label>
+                        <p style="font-size: 0.85rem; color: var(--gray-600); margin-top: 0.5rem;">
+                            开启后，上传的图片将自动进行违规内容检测
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">API Key</label>
+                        <input type="text" class="form-input" id="censor-api-key" placeholder="请输入百度智能云API Key">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Secret Key</label>
+                        <input type="password" class="form-input" id="censor-secret-key" placeholder="请输入百度智能云Secret Key">
+                    </div>
+                    <button class="btn btn-secondary" onclick="saveCensorSettings()">
+                        <i class="fas fa-save"></i> 保存审核设置
                     </button>
                 </div>
             </section>
@@ -1821,6 +1858,47 @@
             alert('网站设置已保存！');
         }
 
+        // 加载百度审核设置
+        async function loadCensorSettings() {
+            try {
+                const response = await fetch('api/censor.php?action=get');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('censor-enabled').checked = data.config.enabled || false;
+                    document.getElementById('censor-api-key').value = data.config.api_key || '';
+                    document.getElementById('censor-secret-key').value = data.config.secret_key || '';
+                }
+            } catch (error) {
+                console.error('加载审核设置失败:', error);
+            }
+        }
+
+        // 保存百度审核设置
+        async function saveCensorSettings() {
+            const config = {
+                enabled: document.getElementById('censor-enabled').checked,
+                api_key: document.getElementById('censor-api-key').value.trim(),
+                secret_key: document.getElementById('censor-secret-key').value.trim()
+            };
+
+            try {
+                const response = await fetch('api/censor.php?action=save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('审核设置已保存！');
+                } else {
+                    alert('保存失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('保存审核设置失败:', error);
+                alert('保存失败，请检查网络连接');
+            }
+        }
+
         // 音乐管理
         // ==================== 音乐管理 ====================
         let currentMusicList = [];
@@ -1988,26 +2066,29 @@
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
             if (!checkLogin()) return;
-            
+
             // 隐藏加载动画
             setTimeout(() => {
                 document.getElementById('loading').classList.add('hidden');
             }, 500);
-            
+
             // 初始化上传
             initUpload();
-            
+
             // 加载照片
             loadPhotos();
-            
+
             // 加载统计数据
             loadStats();
-            
+
             // 初始化音乐上传
             initMusicUpload();
-            
+
             // 检查2FA状态
             check2FAStatus();
+
+            // 加载百度审核设置
+            loadCensorSettings();
         });
     </script>
 </body>
