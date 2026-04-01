@@ -27,6 +27,11 @@
 - 粒子背景
 - 响应式动画
 
+### 🏆 排行榜
+- 最受欢迎照片排行
+- PC端4-6张图自适应展示
+- 移动端2张图展示
+
 ### 👤 个人介绍页
 - 详细的个人资料展示
 - 互动功能
@@ -38,6 +43,8 @@
 - 数据统计
 - 双因素认证
 - 修改密码
+- 百度内容审核（自动检测违规图片）
+- 系统设置（密码修改、2FA、内容审核配置）
 
 ### 🛠️ 技术特性
 - Docker 容器化部署
@@ -99,31 +106,35 @@
 
 ```
 ├── src/
-│   ├── api/            # API 接口
-│   │   ├── admin.php   # 管理员 API
-│   │   ├── auth.php    # 认证 API
-│   │   ├── config.php  # 配置文件
-│   │   ├── gallery.php # 相册 API
-│   │   └── upload.php  # 上传 API
-│   ├── css/            # 样式文件
-│   │   ├── responsive.css # 响应式样式
-│   │   └── style.css   # 主样式
-│   ├── images/         # 图片资源
-│   ├── js/             # JavaScript 文件
-│   │   ├── effects.js  # 特效系统
-│   │   └── main.js     # 主脚本
-│   ├── uploads/        # 上传文件
-│   │   ├── original/   # 原始图片
-│   │   └── thumbs/     # 缩略图
-│   ├── index.html      # 首页
-│   ├── login.html      # 登录页
-│   ├── profile.html    # 个人介绍页
-│   └── admin.html      # 管理后台
-├── php/                # PHP 配置
-│   └── php.ini         # PHP 配置文件
-├── docker-compose.yml  # Docker Compose 配置
-├── Dockerfile          # Docker 构建文件
-└── README.md           # 项目说明
+│   ├── api/                  # API 接口
+│   │   ├── admin.php         # 管理员 API
+│   │   ├── auth.php          # 认证 API
+│   │   ├── config.php        # 配置文件
+│   │   ├── gallery.php       # 相册 API
+│   │   ├── upload.php        # 上传 API
+│   │   ├── censor.php        # 百度内容审核配置 API
+│   │   ├── 2fa.php           # 双因素认证 API
+│   │   └── BaiduImageCensor.php  # 百度图片审核 SDK
+│   ├── css/                  # 样式文件
+│   │   └── style.css         # 主样式（含响应式）
+│   ├── images/               # 图片资源
+│   ├── js/                   # JavaScript 文件
+│   │   ├── effects.js        # 特效系统
+│   │   ├── gallery.js        # 相册功能
+│   │   ├── memory.js         # 回忆功能
+│   │   └── main.js           # 主脚本
+│   ├── uploads/              # 上传文件
+│   │   ├── original/         # 原始图片
+│   │   └── thumbs/           # 缩略图
+│   ├── index.html            # 首页
+│   ├── login.html            # 登录页
+│   ├── profile.html          # 个人介绍页
+│   └── admin.html            # 管理后台
+├── php/                      # PHP 配置
+│   └── php.ini               # PHP 配置文件
+├── docker-compose.yml        # Docker Compose 配置
+├── Dockerfile                # Docker 构建文件
+└── README.md                 # 项目说明
 ```
 
 ## 🔐 安全说明
@@ -138,10 +149,24 @@
 
 ## 📱 移动端优化
 
-- **导航栏**：底部固定，可收起/展开
+- **导航栏**：底部固定导航栏，PC端顶部导航栏
 - **照片网格**：2列布局，优化触摸体验
+- **排行榜网格**：PC端4-6张图自适应，移动端2张图
 - **统计栏**：网格布局，清晰易读
+- **返回顶部**：PC端显示返回顶部按钮
 - **响应式**：适配各种屏幕尺寸
+
+## 🛡️ 内容审核
+
+### 百度智能云内容审核
+- 自动检测违规图片（色情、暴力、政治敏感等）
+- 支持自定义审核策略
+- 上传失败时保留图片并提示具体原因
+- 配置方式：
+  1. 登录管理后台
+  2. 进入「系统设置」
+  3. 填写百度智能云 API Key 和 Secret Key
+  4. 启用内容审核
 
 ## 🎨 技术栈
 
@@ -156,6 +181,8 @@
 - PHP 8.0+
 - MySQL/MariaDB
 - PDO 数据库访问
+- 百度智能云内容审核 API
+- Google Authenticator 2FA
 
 ### 容器化
 - Docker

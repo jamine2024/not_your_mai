@@ -1945,6 +1945,9 @@
             alert('网站设置已保存！');
         }
 
+        // 存储原始密钥（用于保存时判断）
+        let originalSecretKey = '';
+
         // 加载百度审核设置
         async function loadCensorSettings() {
             try {
@@ -1955,7 +1958,15 @@
                 if (data.success) {
                     document.getElementById('censor-enabled').checked = data.config.enabled || false;
                     document.getElementById('censor-api-key').value = data.config.api_key || '';
-                    document.getElementById('censor-secret-key').value = data.config.secret_key || '';
+                    // 如果密钥已设置，显示占位符
+                    if (data.config.secret_key && data.config.secret_key.includes('*')) {
+                        document.getElementById('censor-secret-key').placeholder = '已设置（输入新值可修改）';
+                        document.getElementById('censor-secret-key').value = '';
+                        originalSecretKey = '***MASKED***';
+                    } else {
+                        document.getElementById('censor-secret-key').value = data.config.secret_key || '';
+                        originalSecretKey = '';
+                    }
                 }
             } catch (error) {
                 console.error('加载审核设置失败:', error);
@@ -1964,10 +1975,13 @@
 
         // 保存百度审核设置
         async function saveCensorSettings() {
+            const secretKeyInput = document.getElementById('censor-secret-key').value.trim();
+
             const config = {
                 enabled: document.getElementById('censor-enabled').checked,
                 api_key: document.getElementById('censor-api-key').value.trim(),
-                secret_key: document.getElementById('censor-secret-key').value.trim()
+                // 如果用户没有输入新密钥且之前有设置，则传递空字符串让后端保留原值
+                secret_key: secretKeyInput
             };
 
             try {
@@ -1980,6 +1994,8 @@
                 const data = await response.json();
                 if (data.success) {
                     alert('审核设置已保存！');
+                    // 重新加载设置以更新显示
+                    loadCensorSettings();
                 } else {
                     alert('保存失败: ' + data.message);
                 }
