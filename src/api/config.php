@@ -13,11 +13,24 @@ ini_set('max_execution_time', '600');
 ini_set('max_input_time', '600');
 ini_set('memory_limit', '1G');
 
-// 设置 CORS 头
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+// 设置 CORS 头 - 只允许同源请求
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+$allowedOrigins = [
+    'http://localhost:8080',
+    'http://localhost',
+    'https://photo.fiime.cn'
+];
+
+if (in_array($origin, $allowedOrigins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    header('Access-Control-Allow-Origin: http://localhost:8080');
+}
+
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Allow-Credentials: true');
+// 移除 Credentials，不允许跨域携带 Cookie
+// header('Access-Control-Allow-Credentials: true');
 
 // 处理预检请求
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

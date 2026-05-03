@@ -12,6 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     errorResponse('请求方法不允许', 405);
 }
 
+// 服务端认证检查 - 必须登录才能上传
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    errorResponse('未登录，请先登录管理员账号', 401);
+}
+
 // 初始化百度图片审核
 $censor = new BaiduImageCensor();
 $enableCensor = $censor->isConfigured();
