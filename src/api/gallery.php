@@ -44,8 +44,8 @@ function listPhotos() {
         $perPage = isset($_GET['per_page']) ? max(1, intval($_GET['per_page'])) : 30;
         
         // 限制每页最大数量（防止性能问题）
-        if ($perPage > 1000) {
-            $perPage = 1000;
+        if ($perPage > 10000) {
+            $perPage = 10000;
         }
         
         // 计算偏移量
