@@ -23,14 +23,14 @@ $allowedOrigins = [
 
 if (in_array($origin, $allowedOrigins)) {
     header('Access-Control-Allow-Origin: ' . $origin);
+    // 允许携带 Cookie（同源请求）
+    header('Access-Control-Allow-Credentials: true');
 } else {
     header('Access-Control-Allow-Origin: http://localhost:8080');
 }
 
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
-// 移除 Credentials，不允许跨域携带 Cookie
-// header('Access-Control-Allow-Credentials: true');
 
 // 处理预检请求
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
