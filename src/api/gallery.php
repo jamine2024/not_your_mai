@@ -43,9 +43,9 @@ function listPhotos() {
         $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
         $perPage = isset($_GET['per_page']) ? max(1, intval($_GET['per_page'])) : 30;
         
-        // 限制未登录用户的每页数量（防止数据泄露）
-        if (!$isLoggedIn && $perPage > 30) {
-            $perPage = 30;
+        // 限制每页最大数量（防止性能问题）
+        if ($perPage > 1000) {
+            $perPage = 1000;
         }
         
         // 计算偏移量
