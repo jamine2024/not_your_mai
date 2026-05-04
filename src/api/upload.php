@@ -5,6 +5,7 @@
 ob_start();
 
 require_once 'config.php';
+require_once '2fa.php';  // 引入session_start
 require_once 'BaiduImageCensor.php';
 
 // 只允许POST请求
