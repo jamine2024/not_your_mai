@@ -406,7 +406,8 @@ class GalleryManager {
         img.style.opacity = '0.5';
         img.parentElement.classList.add('loading');
 
-        img.src = photo.file_path;
+        // 优先原图，否则从 thumb_path 推导
+        img.src = photo.file_path || this.deriveOriginalPath(photo.thumb_path);
         document.getElementById('photo-likes').textContent = photo.likes || 0;
 
         // 图片加载完成后隐藏加载动画
@@ -533,11 +534,19 @@ class GalleryManager {
     // 下载照片
     downloadPhoto(photo) {
         const link = document.createElement('a');
-        link.href = photo.file_path;
+        // 优先原图，否则从 thumb_path 推导
+        link.href = photo.file_path || this.deriveOriginalPath(photo.thumb_path);
         link.download = photo.original_name || photo.filename;
         link.click();
     }
     
+    // 从 thumb_path 推导原图路径
+    // thumb: uploads/thumbs/thumb_xxx.jpg -> orig: uploads/original/xxx.jpg
+    deriveOriginalPath(thumbPath) {
+        if (!thumbPath) return '';
+        return thumbPath.replace(/^uploads\/thumbs\/thumb_/, 'uploads/original/');
+    }
+
     // 显示某天照片
     showDayPhotos(year, month, day) {
         const dayPhotos = this.photos.filter(p => {

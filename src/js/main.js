@@ -648,6 +648,14 @@ updateDailyQuote();
 let currentView = 'day';
 let photosData = [];
 
+// 从 thumb_path 推导原图路径
+// thumb: uploads/thumbs/thumb_20260421_211722_69e778e224a95.jpg
+// orig:  uploads/original/20260421_211722_69e778e224a95.jpg
+function deriveOriginalPath(thumbPath) {
+    if (!thumbPath) return '';
+    return thumbPath.replace(/^uploads\/thumbs\/thumb_/, 'uploads/original/');
+}
+
 function initViewSwitch() {
     const navBtns = document.querySelectorAll('.nav-btn[data-view]');
     
@@ -925,7 +933,9 @@ function openPhotoModal(photoId) {
     img.style.opacity = '0.5';
     img.parentElement.classList.add('loading');
 
-    img.src = photo.file_path;
+    // 优先使用后端返回的 file_path，否则从 thumb_path 推导原图路径
+    const originalSrc = photo.file_path || deriveOriginalPath(photo.thumb_path);
+    img.src = originalSrc;
     likes.textContent = photo.likes || 0;
 
     // 图片加载完成后隐藏加载动画
@@ -950,7 +960,9 @@ function openPhotoModal(photoId) {
 
     // 绑定下载按钮
     const downloadBtn = document.getElementById('photo-download');
-    downloadBtn.onclick = () => downloadPhoto(photo.file_path, photo.original_name);
+    // 优先原图，否则用 thumb_path
+    const downloadSrc = photo.file_path || deriveOriginalPath(photo.thumb_path);
+    downloadBtn.onclick = () => downloadPhoto(downloadSrc, photo.original_name);
 
     modal.classList.add('active');
 }

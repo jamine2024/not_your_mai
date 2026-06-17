@@ -35,10 +35,7 @@ switch ($action) {
 function listPhotos() {
     try {
         $db = getDB();
-        
-        // 检查是否已登录
-        $isLoggedIn = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
-        
+
         // 获取分页参数
         $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
         $perPage = isset($_GET['per_page']) ? max(1, intval($_GET['per_page'])) : 30;
@@ -61,16 +58,7 @@ function listPhotos() {
         $stmt->bindParam(2, $offset, PDO::PARAM_INT);
         $stmt->execute();
         $photos = $stmt->fetchAll();
-        
-        // 未登录用户脱敏处理 - 隐藏敏感字段
-        if (!$isLoggedIn) {
-            foreach ($photos as &$photo) {
-                unset($photo['file_path']);
-                unset($photo['original_name']);
-                // 保留thumb_path用于显示缩略图，但限制访问
-            }
-        }
-        
+
         // 计算总页数
         $totalPages = ceil($total / $perPage);
         

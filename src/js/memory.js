@@ -1,5 +1,12 @@
 // 才不是你的小麦 - 回忆页面功能
 
+// 从 thumb_path 推导原图路径
+// thumb: uploads/thumbs/thumb_xxx.jpg -> orig: uploads/original/xxx.jpg
+function deriveOriginalPath(thumbPath) {
+    if (!thumbPath) return '';
+    return thumbPath.replace(/^uploads\/thumbs\/thumb_/, 'uploads/original/');
+}
+
 class MemoryManager {
     constructor() {
         this.photos = [];
@@ -177,8 +184,8 @@ class MemoryManager {
             });
         }
 
-        // 设置图片源
-        overlay.querySelector('img').src = photo.file_path;
+        // 设置图片源（优先原图，否则从 thumb_path 推导）
+        overlay.querySelector('img').src = photo.file_path || deriveOriginalPath(photo.thumb_path);
         overlay.querySelector('img').alt = photo.original_name || '未命名';
 
         // 显示预览
